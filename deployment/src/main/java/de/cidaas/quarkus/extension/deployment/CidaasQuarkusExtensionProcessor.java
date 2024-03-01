@@ -5,7 +5,7 @@ import de.cidaas.quarkus.extension.runtime.TokenIntrospectionResponseFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
+import io.quarkus.resteasy.reactive.spi.CustomContainerResponseFilterBuildItem;
 
 class CidaasQuarkusExtensionProcessor {
 
@@ -17,8 +17,8 @@ class CidaasQuarkusExtensionProcessor {
     }
     
     @BuildStep
-    ResteasyJaxrsProviderBuildItem registerProviders() {
-        return new ResteasyJaxrsProviderBuildItem(TokenIntrospectionResponseFilter.class.getName());
+    CustomContainerResponseFilterBuildItem registerProviders() {
+        return new CustomContainerResponseFilterBuildItem(TokenIntrospectionResponseFilter.class.getName());
     }
     
     @BuildStep

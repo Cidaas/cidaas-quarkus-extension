@@ -1,17 +1,16 @@
 package de.cidaas.quarkus.extension.runtime;
 
-import java.io.IOException;
+import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
 
-public class TokenIntrospectionResponseFilter implements ContainerResponseFilter {
+public class TokenIntrospectionResponseFilter {
 	
 	@Inject CidaasService cidaasService;
 
-	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+	@ServerResponseFilter
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext, Throwable t) {
 		boolean valid = cidaasService.introspectToken();
 		System.out.println("valid: " + valid);
 		responseContext.setStatus(403);
