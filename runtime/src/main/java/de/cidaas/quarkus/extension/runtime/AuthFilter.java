@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 
-public class TokenIntrospectionResponseFilter {
+public class AuthFilter {
 	
 	@Inject CidaasService cidaasService;
 
@@ -17,4 +17,5 @@ public class TokenIntrospectionResponseFilter {
 		responseContext.setStatus(403);
 		responseContext.setEntity(null); 
 	}
+
 }

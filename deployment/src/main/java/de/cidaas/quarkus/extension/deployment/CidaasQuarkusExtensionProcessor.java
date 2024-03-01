@@ -1,7 +1,7 @@
 package de.cidaas.quarkus.extension.deployment;
 
+import de.cidaas.quarkus.extension.runtime.AuthFilter;
 import de.cidaas.quarkus.extension.runtime.CidaasService;
-import de.cidaas.quarkus.extension.runtime.TokenIntrospectionResponseFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -17,8 +17,8 @@ class CidaasQuarkusExtensionProcessor {
     }
     
     @BuildStep
-    CustomContainerResponseFilterBuildItem registerProviders() {
-        return new CustomContainerResponseFilterBuildItem(TokenIntrospectionResponseFilter.class.getName());
+    CustomContainerResponseFilterBuildItem registerAuthFilter() {
+        return new CustomContainerResponseFilterBuildItem(AuthFilter.class.getName());
     }
     
     @BuildStep
