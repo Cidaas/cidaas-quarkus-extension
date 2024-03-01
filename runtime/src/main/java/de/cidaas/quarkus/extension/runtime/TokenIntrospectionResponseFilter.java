@@ -2,6 +2,7 @@ package de.cidaas.quarkus.extension.runtime;
 
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 
