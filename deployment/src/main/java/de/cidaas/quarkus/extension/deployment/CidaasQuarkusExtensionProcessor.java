@@ -8,7 +8,7 @@ import de.cidaas.quarkus.extension.runtime.CidaasService;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.resteasy.reactive.spi.CustomContainerResponseFilterBuildItem;
+import io.quarkus.resteasy.reactive.spi.CustomContainerRequestFilterBuildItem;
 
 class CidaasQuarkusExtensionProcessor {
 
@@ -20,8 +20,8 @@ class CidaasQuarkusExtensionProcessor {
     }
     
     @BuildStep
-    CustomContainerResponseFilterBuildItem registerAuthFilter() {
-        return new CustomContainerResponseFilterBuildItem(AuthFilter.class.getName());
+    CustomContainerRequestFilterBuildItem registerAuthFilter() {
+        return new CustomContainerRequestFilterBuildItem(AuthFilter.class.getName());
     }
     
     @BuildStep
