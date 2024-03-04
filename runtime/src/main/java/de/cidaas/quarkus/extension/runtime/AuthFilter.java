@@ -1,8 +1,6 @@
 package de.cidaas.quarkus.extension.runtime;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
@@ -28,62 +26,30 @@ public class AuthFilter {
 			return;
 		}
 		
-		String accessToken = requestContext.getHeaderString("Authorization");
-		
 		Method method = resourceInfo.getResourceMethod();
-		
 		RolesAllowed rolesAllowed = method.getAnnotation(RolesAllowed.class);
-		List<String> roles = parseRolesFromAnnotation(rolesAllowed);
-		
 		GroupsAllowed groupsAllowed = method.getAnnotation(GroupsAllowed.class);
-		List<Group> groups = parseGroupsFromAnnotation(groupsAllowed);
-		
 		ScopesAllowed scopesAllowed = method.getAnnotation(ScopesAllowed.class);
-		List<String> scopes = parseScopesFromAnnotation(scopesAllowed);
-		
-		if (accessToken != null) {
-			accessToken = accessToken.replace("Bearer ", "");
-			boolean valid = cidaasService.introspectToken(accessToken, roles, groups, scopes);
-			if (valid == false) {
-				responseContext.setStatus(403);
-				responseContext.setEntity(null);
-			}
-		}
-	}
-	
-	List<String> parseRolesFromAnnotation(RolesAllowed rolesAllowed) {
-		if (rolesAllowed == null) {
-			return null;
+		if (rolesAllowed == null && groupsAllowed == null && scopesAllowed == null) {
+			return;
 		}
 		
-		return Arrays.asList(rolesAllowed.value());
-	}
-	
-	List<Group> parseGroupsFromAnnotation(GroupsAllowed groupsAllowed) {
-		if (groupsAllowed == null) {
-			return null;
+		String accessToken = requestContext.getHeaderString("Authorization");
+		if (accessToken == null) {
+			responseContext.setStatus(401);
+			responseContext.setEntity(null);
+			return;
 		}
 		
-		List<Group> result = new ArrayList<>();
+		accessToken = accessToken.replace("Bearer ", "");
+		List<String> roles = AnnotationsMapper.mapToRoles(rolesAllowed);
+		List<Group> groups = AnnotationsMapper.mapToGroups(groupsAllowed);
+		List<String> scopes = AnnotationsMapper.mapToScopes(scopesAllowed);
 		
-		List<String> groups = Arrays.asList(groupsAllowed.value());
-		
-		for(String group : groups) {
-			String[] parts = group.split(":");
-			String groupId = parts[0];
-			String role = parts[1];
-			Group groupEntity = new Group(groupId, Arrays.asList(role), false);
-			result.add(groupEntity);
+		boolean valid = cidaasService.introspectToken(accessToken, roles, groups, scopes);
+		if (valid == false) {
+			responseContext.setStatus(401);
+			responseContext.setEntity(null);
 		}
-		
-		return result;
-	}
-	
-	List<String> parseScopesFromAnnotation(ScopesAllowed scopesAllowed) {
-		if (scopesAllowed == null) {
-			return null;
-		}
-		
-		return Arrays.asList(scopesAllowed.value());
 	}
 }
