@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.cidaas.quarkus.extension.Group;
+import de.cidaas.quarkus.extension.GroupAllowed;
 import de.cidaas.quarkus.extension.GroupsAllowed;
 import de.cidaas.quarkus.extension.RolesAllowed;
 import de.cidaas.quarkus.extension.ScopesAllowed;
@@ -24,17 +25,11 @@ public class AnnotationsMapper {
 		}
 		
 		List<Group> result = new ArrayList<>();
+		List<GroupAllowed> groups = Arrays.asList(groupsAllowed.value());
 		
-		List<String> groups = Arrays.asList(groupsAllowed.value());
-		
-		for(String group : groups) {
-			String[] parts = group.split(":");
-			String groupId = parts[0];
-			String role = parts[1];
-			Group groupEntity = new Group(groupId, Arrays.asList(role), false);
-			result.add(groupEntity);
+		for(GroupAllowed group : groups) {
+			result.add(new Group(group.id(), Arrays.asList(group.roles()), group.strictRolesValidation()));
 		}
-		
 		return result;
 	}
 	
