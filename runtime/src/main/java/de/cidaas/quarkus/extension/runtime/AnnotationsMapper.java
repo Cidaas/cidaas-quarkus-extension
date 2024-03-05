@@ -6,38 +6,30 @@ import java.util.List;
 
 import de.cidaas.quarkus.extension.Group;
 import de.cidaas.quarkus.extension.GroupAllowed;
-import de.cidaas.quarkus.extension.GroupsAllowed;
-import de.cidaas.quarkus.extension.RolesAllowed;
-import de.cidaas.quarkus.extension.ScopesAllowed;
+import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
+import de.cidaas.quarkus.extension.TokenValidation;
 
 public class AnnotationsMapper {
-	static List<String> mapToRoles(RolesAllowed rolesAllowed) {
-		if (rolesAllowed == null) {
-			return null;
-		}
-		
-		return Arrays.asList(rolesAllowed.value());
+	static TokenIntrospectionRequest mapToIntrospectionRequest(String accessToken, TokenValidation tokenValidation) {
+		TokenIntrospectionRequest request = new TokenIntrospectionRequest();
+		request.setToken(accessToken);
+		request.setToken_type_hint(tokenValidation.tokenTypeHint());
+		request.setRoles(Arrays.asList(tokenValidation.roles()));
+		request.setGroups(mapToGroups(tokenValidation.groups()));
+		request.setScopes(Arrays.asList(tokenValidation.scopes()));
+		request.setStrictRoleValidation(tokenValidation.strictRoleValidation());
+		request.setStrictGroupValidation(tokenValidation.strictGroupValidation());
+		request.setStrictScopeValidation(tokenValidation.strictScopeValidation());
+		request.setStrictValidation(tokenValidation.strictValidation());
+		return request;
 	}
 	
-	static List<Group> mapToGroups(GroupsAllowed groupsAllowed) {
-		if (groupsAllowed == null) {
-			return null;
-		}
-		
+	static List<Group> mapToGroups(GroupAllowed[] groupsAllowed) {
 		List<Group> result = new ArrayList<>();
-		List<GroupAllowed> groups = Arrays.asList(groupsAllowed.value());
-		
+		List<GroupAllowed> groups = Arrays.asList(groupsAllowed);
 		for(GroupAllowed group : groups) {
-			result.add(new Group(group.id(), Arrays.asList(group.roles()), group.strictRolesValidation()));
+			result.add(new Group(group.id(), Arrays.asList(group.roles()), group.strictRoleValidation()));
 		}
 		return result;
-	}
-	
-	static List<String> mapToScopes(ScopesAllowed scopesAllowed) {
-		if (scopesAllowed == null) {
-			return null;
-		}
-		
-		return Arrays.asList(scopesAllowed.value());
 	}
 }

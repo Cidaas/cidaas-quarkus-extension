@@ -1,13 +1,14 @@
 package de.cidaas.quarkus.extension;
 
-import java.lang.annotation.Repeatable;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(GroupsAllowed.class)
+@Target(ElementType.METHOD)
 public @interface GroupAllowed {
 	String id();
     String[] roles();
-    boolean strictRolesValidation() default false;
+    boolean strictRoleValidation() default false;
 }
