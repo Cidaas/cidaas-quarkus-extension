@@ -7,16 +7,6 @@ public class Group {
 	private List<String> roles;
 	private boolean strictRoleValidation;
 	
-	public Group() {
-		super();
-	}
-
-	public Group(String groupId, List<String> roles) {
-		super();
-		this.groupId = groupId;
-		this.roles = roles;
-	}
-
 	public Group(String groupId, List<String> roles, boolean strictRoleValidation) {
 		super();
 		this.groupId = groupId;
