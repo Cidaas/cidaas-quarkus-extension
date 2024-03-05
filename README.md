@@ -49,7 +49,7 @@ to validate groups, @GroupAllowed Annotation(s) have to be added. It has the fol
 | roles                | List of group roles, which are allowed to access secured api                                                         | yes                        |
 | strictRoleValidation | If true, user will need all roles from the group roles list to access api. By default, user only need 1 of the roles | no, default value is false |
 
-An Example of a function being secured with cidaas quarkus extension looks like the following:
+Examples of  function being secured with cidaas quarkus extension looks like the following:
 
 * User need only to be authenticated, without having any roles, groups or scopes to access the api
 ```java
