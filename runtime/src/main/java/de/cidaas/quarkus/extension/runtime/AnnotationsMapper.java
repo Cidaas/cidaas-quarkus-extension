@@ -11,20 +11,36 @@ import de.cidaas.quarkus.extension.TokenValidation;
 
 public class AnnotationsMapper {
 	static TokenIntrospectionRequest mapToIntrospectionRequest(String accessToken, TokenValidation tokenValidation) {
+		if (accessToken == null || tokenValidation == null) {
+			return null;
+		}
+		
 		TokenIntrospectionRequest request = new TokenIntrospectionRequest();
+		
 		request.setToken(accessToken);
 		request.setToken_type_hint(tokenValidation.tokenTypeHint());
-		request.setRoles(Arrays.asList(tokenValidation.roles()));
-		request.setGroups(mapToGroups(tokenValidation.groups()));
-		request.setScopes(Arrays.asList(tokenValidation.scopes()));
+		
+		if(tokenValidation.roles() != null) {
+			request.setRoles(Arrays.asList(tokenValidation.roles()));
+		}
+		
+		if(tokenValidation.groups() != null) {
+			request.setGroups(mapToGroups(tokenValidation.groups()));
+		}
+		
+		if(tokenValidation.scopes() != null) {
+			request.setScopes(Arrays.asList(tokenValidation.scopes()));
+		}
+		
 		request.setStrictRoleValidation(tokenValidation.strictRoleValidation());
 		request.setStrictGroupValidation(tokenValidation.strictGroupValidation());
 		request.setStrictScopeValidation(tokenValidation.strictScopeValidation());
 		request.setStrictValidation(tokenValidation.strictValidation());
+		
 		return request;
 	}
 	
-	static List<Group> mapToGroups(GroupAllowed[] groupsAllowed) {
+	private static List<Group> mapToGroups(GroupAllowed[] groupsAllowed) {
 		List<Group> result = new ArrayList<>();
 		List<GroupAllowed> groups = Arrays.asList(groupsAllowed);
 		for(GroupAllowed group : groups) {
