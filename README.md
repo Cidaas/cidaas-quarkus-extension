@@ -110,7 +110,7 @@ public String helloProtected() {
 @GET
 @Path("/protected")
 @Produces(MediaType.TEXT_PLAIN)
-@TokenValidation(‚
+@TokenValidation(
     groups = {
         @GroupAllowed(id="groupId", roles = { "groupRole" }),
     },
@@ -126,7 +126,7 @@ public String helloProtected() {
 @GET
 @Path("/protected")
 @Produces(MediaType.TEXT_PLAIN)
-@TokenValidation(‚
+@TokenValidation(
     groups = {
         @GroupAllowed(
             id="group1", 
