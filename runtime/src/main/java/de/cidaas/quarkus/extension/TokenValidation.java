@@ -16,4 +16,5 @@ public @interface TokenValidation {
 	boolean strictGroupValidation() default false;
 	boolean strictScopeValidation() default false;
 	boolean strictValidation() default false;
+	boolean offlineValidation() default false;
 }

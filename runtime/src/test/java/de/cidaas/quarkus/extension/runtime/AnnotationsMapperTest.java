@@ -72,6 +72,10 @@ public class AnnotationsMapperTest {
 			public boolean strictValidation() {
 				return false;
 			}
+			@Override
+			public boolean offlineValidation() {
+				return false;
+			}
 		};
 		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
 		assertEquals(result.getToken(), accessToken);
@@ -174,6 +178,11 @@ public class AnnotationsMapperTest {
 			@Override
 			public boolean strictValidation() {
 				return true;
+			}
+
+			@Override
+			public boolean offlineValidation() {
+				return false;
 			}
 		};
 		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);

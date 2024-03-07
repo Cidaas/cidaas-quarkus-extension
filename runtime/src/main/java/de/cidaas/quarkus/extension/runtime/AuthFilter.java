@@ -29,17 +29,24 @@ public class AuthFilter {
 			return Optional.empty();
 		}
 		
-		String accessToken = requestContext.getHeaderString("Authorization");
-		if (accessToken == null) {
+		String authorizationHeader = requestContext.getHeaderString("Authorization");
+		if (authorizationHeader == null) {
 			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 		}
 		
-		accessToken = accessToken.replace("Bearer ", "");
+		String[] arr = authorizationHeader.split(" ", 0);
+		String accessToken = arr[arr.length - 1];
+		
 		TokenIntrospectionRequest tokenIntrospectionRequest = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
-		boolean valid = cidaasService.introspectToken(tokenIntrospectionRequest);
+		
+		boolean valid = tokenValidation.offlineValidation() == true ? 
+						cidaasService.offlineTokenValidation(tokenIntrospectionRequest) :
+						cidaasService.introspectToken(tokenIntrospectionRequest);
+		
 		if (valid == false) {
 			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 		}
+		
 		return Optional.empty();
 	}
 }
