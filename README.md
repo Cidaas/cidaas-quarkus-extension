@@ -26,9 +26,7 @@ It will ensure a correct api url to be called for token verification.
 
 ## Usage
 
-### Token verification by using introspection endpoint
-
-To do token verification by using cidaas introspection endpoint, you will need to add the @TokenValidation annotation to your function. The annotation support the following optional members:
+To do token verification either by using cidaas introspection endpoint or using offline token validation, you will need to add the @TokenValidation annotation to your function. The annotation support the following optional members:
 
 | Name                  | Description                                                                                                                                                                                                         | Default Value |
 |-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
@@ -39,6 +37,7 @@ To do token verification by using cidaas introspection endpoint, you will need t
 | strictGroupValidation | If true, user will need all groups from the list to access api. By default, user only need 1 of the groups                                                                                                          | false         |
 | strictScopeValidation | If true, user will need all scopes from the list to access api. By default, user only need 1 of the scopes                                                                                                          | false         |
 | strictValidation      | If true, user will need to have each of defined validation (roles, groups and/or scopes). E.g. valid roles & valid scopes. By default, user will be able to access api only with 1 validation e.g. valid roles only | false         |
+| offlineValidation      | If true, token will be validated locally using offline token validation, without calling introspection endpoint | false         |
 | tokenTypeHint         | described which type of token is currently being validated. e.g. access_token                                                                                                                                       | Empty String  |
 
 to validate groups, @GroupAllowed Annotation(s) have to be added. It has the following member:
@@ -139,6 +138,20 @@ public String helloProtected() {
         ),
     },
     strictGroupValidation = true,
+)
+public String helloProtected() {
+    return "Hello from protected api";
+}
+```
+
+* User need to have one of the "role1" or "role2" role to access the api, and want to use offline token validation instead of calling introspection endpoint
+```java
+@GET
+@Path("/protected")
+@Produces(MediaType.TEXT_PLAIN)
+@TokenValidation(
+    roles = {"role1", "role2"},
+    offlineValidation = true
 )
 public String helloProtected() {
     return "Hello from protected api";
