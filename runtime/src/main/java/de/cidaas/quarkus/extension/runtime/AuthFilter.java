@@ -18,6 +18,8 @@ public class AuthFilter {
 	
 	@Inject CidaasService cidaasService;
 	
+	@Inject OfflineTokenValidationService offlineTokenValidationService;
+	
 	@ServerRequestFilter
 	public Optional<RestResponse<Void>> getFilter(ContainerRequestContext requestContext) {
 		if (resourceInfo == null) {
@@ -40,7 +42,7 @@ public class AuthFilter {
 		TokenIntrospectionRequest tokenIntrospectionRequest = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
 		
 		boolean valid = tokenValidation.offlineValidation() == true ? 
-						cidaasService.offlineTokenValidation(tokenIntrospectionRequest) :
+						offlineTokenValidationService.introspectToken(tokenIntrospectionRequest) :
 						cidaasService.introspectToken(tokenIntrospectionRequest);
 		
 		if (valid == false) {
