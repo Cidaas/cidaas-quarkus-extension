@@ -76,8 +76,8 @@ public class OfflineTokenValidationService {
 			return false;
 		}
 		
-		String kid = this.getString(header, "kid");
-		String alg = this.getString(header, "alg");
+		String kid = this.getStringFromJsonOrNull(header, "kid");
+		String alg = this.getStringFromJsonOrNull(header, "alg");
 		
 		for (int i = 0; i < keys.size(); i++) {
 			JsonObject key = keys.getJsonObject(i);
@@ -93,11 +93,11 @@ public class OfflineTokenValidationService {
 	public boolean validateGeneralInfo(JsonObject payload) {
 		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.CidaasClient/mp-rest/url", String.class);
 		
-		if (this.getString(payload, "iss") == null) {
+		if (this.getStringFromJsonOrNull(payload, "iss") == null) {
 			return false;
 		}
 		
-		if (!this.getString(payload, "iss").equals(baseUrl)) {
+		if (!this.getStringFromJsonOrNull(payload, "iss").equals(baseUrl)) {
 			return false;
 		}
 		
@@ -210,7 +210,7 @@ public class OfflineTokenValidationService {
 		return false;
 	}
 	
-	String getString(JsonObject jsonObject, String key) {
+	String getStringFromJsonOrNull(JsonObject jsonObject, String key) {
 		JsonString jsonString = jsonObject.getJsonString(key);
 		if (jsonString == null) {
 			return null;

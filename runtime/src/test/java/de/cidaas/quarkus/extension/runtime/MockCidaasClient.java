@@ -17,7 +17,6 @@ public class MockCidaasClient implements CidaasClient {
 
 	@Override
 	public Response getJwks() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
