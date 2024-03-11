@@ -34,24 +34,13 @@ public class OfflineTokenValidationService {
 	CacheService cacheService;
 	
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {	
-		String[] arr = tokenIntrospectionRequest.getToken().split("\\.", 0);
-		Base64.Decoder decoder = Base64.getDecoder();
-				
-		byte[] decodedBytesHeader = decoder.decode(arr[0]);
-		String decodedStringHeader = new String(decodedBytesHeader);
-		JsonReader headerReader = Json.createReader(new StringReader(decodedStringHeader));
-		JsonObject header = headerReader.readObject();
-		
 		if (validateTokenHeader(header) == false) {
 			return false;
 		}
-			    
-		byte[] decodedBytesPayload = decoder.decode(arr[1]);
-		String decodedStringPayload = new String(decodedBytesPayload);
-		JsonReader payloadReader = Json.createReader(new StringReader(decodedStringPayload));
-		JsonObject payload = payloadReader.readObject();
 		
 		if (validateGeneralInfo(payload) == false) {
+		JsonObject header = JwtUtil.decodeHeader(tokenIntrospectionRequest.getToken());
+		JsonObject payload = JwtUtil.decodePayload(tokenIntrospectionRequest.getToken());
 			return false;
 		}
 		
