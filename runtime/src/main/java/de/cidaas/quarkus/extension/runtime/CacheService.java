@@ -37,10 +37,8 @@ public class CacheService {
 	@CacheInvalidate(cacheName = "jwk-cache")
 	void clearJwkCache() {}
 	
-	// TODO: override refresh value from property file
 	@Scheduled(every = "${de.cidaas.quarkus.extension.cache-refresh-rate:86400s}") // 1 day by default
 	void refreshJwks() {
-		System.out.println("jwk refreshed");
 		clearJwkCache();
 		getJwks();
 	}
