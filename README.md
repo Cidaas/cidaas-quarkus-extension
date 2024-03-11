@@ -24,6 +24,16 @@ de.cidaas.quarkus.extension.CidaasClient/mp-rest/url=<your_cidaas_base_url>
 
 It will ensure a correct api url to be called for token verification.
 
+By default, jwk list will be cached for offline validation purpose. The frequency to refresh jwk could be overwrite by adding the following line to application.properties file:
+
+```java
+de.cidaas.quarkus.extension.cache-refresh-rate=216000s
+```
+
+the above example will refresh jwk list each 6 hour. This Configuration is optional, and the default value is 86400s (1 day).
+
+
+
 ## Usage
 
 To do token verification either by using cidaas introspection endpoint or using offline token validation, you will need to add the @TokenValidation annotation to your function. The annotation support the following optional members:

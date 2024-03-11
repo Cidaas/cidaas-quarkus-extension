@@ -31,32 +31,8 @@ import jakarta.ws.rs.core.Response;
 public class OfflineTokenValidationService {
 	
 	@Inject
-	@RestClient
-	CidaasClient cidaasClient;
+	CacheService cacheService;
 	
-	void onStart(@Observes StartupEvent ev) {          
-		getJwks();
-    }
-	
-	@CacheResult(cacheName = "jwk-cache")
-	JsonObject getJwks() {
-		Response response = cidaasClient.getJwks();
-		return response.readEntity(JsonObject.class);
-	}
-	
-	@CacheInvalidate(cacheName = "jwk-cache")
-	void clearJwkCache() {}
-	
-	@Scheduled(every = "86400s") // 1 day
-	void refreshJwks() {
-		clearJwkCache();
-		getJwks();
-	}
-	
-	void onStop(@Observes ShutdownEvent ev) {
-		clearJwkCache();
-    }
-
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {	
 		String[] arr = tokenIntrospectionRequest.getToken().split("\\.", 0);
 		Base64.Decoder decoder = Base64.getDecoder();
@@ -106,7 +82,7 @@ public class OfflineTokenValidationService {
 	}
 	
 	public boolean validateTokenHeader(JsonObject header) {
-		JsonObject jwks = getJwks();
+		JsonObject jwks = cacheService.getJwks();
 		JsonArray keys = jwks.getJsonArray("keys");
 		
 		String kid = header.getString("kid");
