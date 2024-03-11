@@ -1,31 +1,18 @@
 package de.cidaas.quarkus.extension.runtime;
 
-import java.io.StringReader;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import de.cidaas.quarkus.extension.CidaasClient;
 import de.cidaas.quarkus.extension.Group;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
-import io.quarkus.cache.CacheInvalidate;
-import io.quarkus.cache.CacheResult;
-import io.quarkus.runtime.ShutdownEvent;
-import io.quarkus.runtime.StartupEvent;
-import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import jakarta.json.JsonString;
-import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class OfflineTokenValidationService {
@@ -34,13 +21,19 @@ public class OfflineTokenValidationService {
 	CacheService cacheService;
 	
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {	
-		if (validateTokenHeader(header) == false) {
+		if (tokenIntrospectionRequest == null) {
 			return false;
 		}
 		
-		if (validateGeneralInfo(payload) == false) {
 		JsonObject header = JwtUtil.decodeHeader(tokenIntrospectionRequest.getToken());
+		
+		if (header == null || validateTokenHeader(header) == false) {
+			return false;
+		}
+
 		JsonObject payload = JwtUtil.decodePayload(tokenIntrospectionRequest.getToken());
+		
+		if (payload == null || validateGeneralInfo(payload) == false) {
 			return false;
 		}
 		
@@ -72,10 +65,19 @@ public class OfflineTokenValidationService {
 	
 	public boolean validateTokenHeader(JsonObject header) {
 		JsonObject jwks = cacheService.getJwks();
+		
+		if (jwks == null) {
+			return false;
+		}
+		
 		JsonArray keys = jwks.getJsonArray("keys");
 		
-		String kid = header.getString("kid");
-		String alg = header.getString("alg");
+		if (keys == null || keys.isEmpty()) {
+			return false;
+		}
+		
+		String kid = this.getString(header, "kid");
+		String alg = this.getString(header, "alg");
 		
 		for (int i = 0; i < keys.size(); i++) {
 			JsonObject key = keys.getJsonObject(i);
@@ -91,7 +93,11 @@ public class OfflineTokenValidationService {
 	public boolean validateGeneralInfo(JsonObject payload) {
 		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.CidaasClient/mp-rest/url", String.class);
 		
-		if (!payload.getString("iss").equals(baseUrl)) {
+		if (this.getString(payload, "iss") == null) {
+			return false;
+		}
+		
+		if (!this.getString(payload, "iss").equals(baseUrl)) {
 			return false;
 		}
 		
@@ -202,6 +208,14 @@ public class OfflineTokenValidationService {
 			}
 		}
 		return false;
+	}
+	
+	String getString(JsonObject jsonObject, String key) {
+		JsonString jsonString = jsonObject.getJsonString(key);
+		if (jsonString == null) {
+			return null;
+		}
+		return jsonString.getString();
 	}
 
 }
