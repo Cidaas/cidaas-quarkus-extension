@@ -18,6 +18,9 @@ public class CidaasService {
 		
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {
 		Response response = cidaasClient.callIntrospection(tokenIntrospectionRequest);
+		if (response == null) {
+			return false;
+		}
 		JsonObject output = response.readEntity(JsonObject.class);
 		return output.getBoolean("active");
 	}
