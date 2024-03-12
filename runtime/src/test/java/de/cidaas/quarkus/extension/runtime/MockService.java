@@ -15,6 +15,10 @@ import jakarta.json.JsonObjectBuilder;
 
 @RequestScoped
 public class MockService {
+	String getToken() {
+		return "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlzcyI6Iklzc3VlciIsImV4cCI6IjIwMjQtMDMtMTJUMTg6MzE6MjAuMzk2WiIsImlhdCI6IjIwMjQtMDMtMTJUMTI6MzE6MjAuMzk2WiJ9.ADYf1qQy11JJH3T2YPlXyDmIzggflj1O7zXKsUZc8fg";
+	}
+	
 	JsonObject createJwks() {
 		JsonObject jwks = Json.createObjectBuilder()
 			.add("keys", Json.createArrayBuilder()
