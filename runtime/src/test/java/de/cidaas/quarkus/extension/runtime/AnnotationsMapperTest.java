@@ -14,23 +14,6 @@ import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.TokenValidation;
 
 public class AnnotationsMapperTest {
-	
-	@Test
-	public void testMapAnnotationNoAccessToken() {
-		String accessToken = null;
-		TokenValidation tokenValidation = null;
-		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
-		assertNull(result);
-	}
-	
-	@Test
-	public void testMapAnnotationNoTokenValidation() {
-		String accessToken = "accessToken";
-		TokenValidation tokenValidation = null;
-		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
-		assertNull(result);
-	}
-	
 	@Test
 	public void testMapAnnotationEmpty() {
 		String accessToken = "";

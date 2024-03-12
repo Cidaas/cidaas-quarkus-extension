@@ -1,9 +1,12 @@
 package de.cidaas.quarkus.extension.runtime;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.TokenValidation;
@@ -20,35 +23,51 @@ public class AuthFilter {
 	
 	@Inject OfflineTokenValidationService offlineTokenValidationService;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(AuthFilter.class);
+	
 	@ServerRequestFilter
 	public Optional<RestResponse<Void>> getFilter(ContainerRequestContext requestContext) {
 		if (resourceInfo == null) {
-			return Optional.empty();
+			throw new CidaasQuarkusException("resourceInfo is null!");
 		}
 		
-		TokenValidation tokenValidation = resourceInfo.getResourceMethod().getAnnotation(TokenValidation.class);
+		if (resourceInfo.getResourceMethod() == null) {
+			throw new CidaasQuarkusException("resourceMethod is null!");
+		}
+		
+		Method method = resourceInfo.getResourceMethod();
+		
+		TokenValidation tokenValidation = method.getAnnotation(TokenValidation.class);
 		if (tokenValidation == null) {
 			return Optional.empty();
 		}
 		
+		LOG.info("Filtering request to: {}", requestContext.getUriInfo().getAbsolutePath().toString());
+		
 		String authorizationHeader = requestContext.getHeaderString("Authorization");
 		if (authorizationHeader == null) {
+			LOG.warn("Method has no authorization header:" + method.getName());
 			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 		}
 		
 		String[] arr = authorizationHeader.split(" ", 0);
 		String accessToken = arr[arr.length - 1];
 		
+		if (accessToken == null) {
+			LOG.warn("accessToken is null!");
+			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
+		}
+		
 		TokenIntrospectionRequest tokenIntrospectionRequest = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
+		
+		if (tokenIntrospectionRequest == null) {
+			throw new CidaasQuarkusException("tokenIntrospectionRequest is null!");
+		}
 		
 		boolean valid = tokenValidation.offlineValidation() == true ? 
 						offlineTokenValidationService.introspectToken(tokenIntrospectionRequest) :
 						cidaasService.introspectToken(tokenIntrospectionRequest);
 		
-		if (valid == false) {
-			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
-		}
-		
-		return Optional.empty();
+		return valid ? Optional.empty() : Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 	}
 }

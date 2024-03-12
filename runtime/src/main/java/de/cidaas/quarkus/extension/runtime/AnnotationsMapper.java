@@ -10,11 +10,16 @@ import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.TokenValidation;
 
 public class AnnotationsMapper {
+	
+	/**
+     * map TokenValidation to TokenIntrospectionRequest
+     *
+     * @param accessToken token to be put on TokenIntrospectionRequest.
+     * @param tokenValidation input from method annotation.
+     * 
+     * @return TokenIntrospectionRequest
+     */
 	static TokenIntrospectionRequest mapToIntrospectionRequest(String accessToken, TokenValidation tokenValidation) {
-		if (accessToken == null || tokenValidation == null) {
-			return null;
-		}
-		
 		TokenIntrospectionRequest request = new TokenIntrospectionRequest();
 		
 		request.setToken(accessToken);

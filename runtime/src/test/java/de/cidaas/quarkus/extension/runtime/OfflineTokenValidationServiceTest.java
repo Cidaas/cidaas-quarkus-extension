@@ -1,7 +1,9 @@
 package de.cidaas.quarkus.extension.runtime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -42,13 +44,9 @@ public class OfflineTokenValidationServiceTest {
 	@BeforeEach
 	public void initEach() {
 		when(cacheService.getJwks()).thenReturn(mockService.createJwks());
+		doNothing().when(cacheService).refreshJwks();
 		header = mockService.createHeader();
 		tokenIntrospectionRequest = mockService.createIntrospectionRequest();
-	}
-	
-	@Test
-	public void testIntrospectToken_noIntrospectionRequest() {
-		assertFalse(offlineTokenValidationService.introspectToken(null));
 	}
 	
 	@Test
@@ -284,7 +282,10 @@ public class OfflineTokenValidationServiceTest {
 			.add("keys", Json.createArrayBuilder())
 			.build();
 		when(cacheService.getJwks()).thenReturn(emptyJwks);		
-		assertFalse(offlineTokenValidationService.validateTokenHeader(header));
+		CidaasQuarkusException exception = assertThrows(CidaasQuarkusException.class, () -> {
+			offlineTokenValidationService.validateTokenHeader(header);
+	    });
+		assertTrue(exception.getMessage().contains("JWK invalid!"));
 	}
 	
 	@Test

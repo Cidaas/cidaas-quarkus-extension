@@ -1,6 +1,8 @@
 package de.cidaas.quarkus.extension.runtime;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.cidaas.quarkus.extension.CidaasClient;
 import io.quarkus.cache.CacheInvalidate;
@@ -20,16 +22,18 @@ public class CacheService {
 	@RestClient
 	CidaasClient cidaasClient;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(CacheService.class);
 	
-	void onStart(@Observes StartupEvent ev) {    
+	void onStart(@Observes StartupEvent ev) {  
 		getJwks();
+		LOG.info("get JWK cache.");
     }
 	
 	@CacheResult(cacheName = "jwk-cache")
 	JsonObject getJwks() {
 		Response response = cidaasClient.getJwks();
 		if (response == null) {
-			return null;
+			throw new CidaasQuarkusException("response of jwks is null!");
 		}
 		return response.readEntity(JsonObject.class);
 	}
@@ -41,9 +45,11 @@ public class CacheService {
 	void refreshJwks() {
 		clearJwkCache();
 		getJwks();
+		LOG.info("refresh JWK cache!");
 	}
 	
 	void onStop(@Observes ShutdownEvent ev) {
 		clearJwkCache();
+		LOG.info("clear JWK cache.");
     }
 }

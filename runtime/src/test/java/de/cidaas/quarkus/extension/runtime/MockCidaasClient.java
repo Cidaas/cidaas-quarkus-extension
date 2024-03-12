@@ -7,6 +7,8 @@ import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.ws.rs.core.Response;
 
 @Alternative()
@@ -15,9 +17,13 @@ import jakarta.ws.rs.core.Response;
 @RestClient
 public class MockCidaasClient implements CidaasClient {
 
+	@Inject
+	MockService mockService;
+	
 	@Override
 	public Response getJwks() {
-		return null;
+		JsonObject jwks = mockService.createJwks();
+		return Response.ok(jwks).build();
 	}
 
 	@Override

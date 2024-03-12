@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.cidaas.quarkus.extension.Group;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
@@ -15,16 +17,20 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 
 @ApplicationScoped
-public class OfflineTokenValidationService {
-	
+public class OfflineTokenValidationService {	
 	@Inject
 	CacheService cacheService;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(OfflineTokenValidationService.class);
+	
+	/**
+     * introspect token without calling introspection endpoint.
+     *
+     * @param TokenIntrospectionRequest contain access token & definition which claims to be validated and how.
+     * 
+     * @return true if tokenIntrospectionRequest is valid, false if invalid
+     */
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {	
-		if (tokenIntrospectionRequest == null) {
-			return false;
-		}
-		
 		JsonObject header = JwtUtil.decodeHeader(tokenIntrospectionRequest.getToken());
 		
 		if (header == null || validateTokenHeader(header) == false) {
@@ -63,17 +69,26 @@ public class OfflineTokenValidationService {
 		
 	}
 	
-	public boolean validateTokenHeader(JsonObject header) {
+	/**
+     * validate header part of access token.
+     *
+     * @param header to be validated.
+     * 
+     * @return true if header‚ is valid, false if invalid
+     */
+	boolean validateTokenHeader(JsonObject header) {
 		JsonObject jwks = cacheService.getJwks();
 		
 		if (jwks == null) {
-			return false;
+			LOG.error("jwk is null!");
+			throw new CidaasQuarkusException("JWK invalid!");
 		}
 		
 		JsonArray keys = jwks.getJsonArray("keys");
 		
 		if (keys == null || keys.isEmpty()) {
-			return false;
+			LOG.error("keys couldn't be found!");
+			throw new CidaasQuarkusException("JWK invalid!");
 		}
 		
 		String kid = this.getStringFromJsonOrNull(header, "kid");
@@ -90,14 +105,23 @@ public class OfflineTokenValidationService {
 		return false;
 	}
 	
-	public boolean validateGeneralInfo(JsonObject payload) {
+	/**
+     * validate payload part of access token.
+     *
+     * @param payload to be validated.
+     * 
+     * @return true if payload is valid, false if invalid
+     */
+	boolean validateGeneralInfo(JsonObject payload) {
 		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.CidaasClient/mp-rest/url", String.class);
 		
 		if (this.getStringFromJsonOrNull(payload, "iss") == null) {
+			LOG.warn("token doesn't have iss!");
 			return false;
 		}
 		
 		if (!this.getStringFromJsonOrNull(payload, "iss").equals(baseUrl)) {
+			LOG.warn("iss is invalid!");
 			return false;
 		}
 		
@@ -105,13 +129,14 @@ public class OfflineTokenValidationService {
 		Instant expirationDate = Instant.ofEpochSecond(dateAsNumber);
 		
 		if (expirationDate.compareTo(Instant.now()) < 0) {
+			LOG.warn("token is expired!");
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public boolean validateScopes (TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
+	private boolean validateScopes (TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
 		JsonArray scopes = payload.getJsonArray("scopes");
 		if (scopes == null) {
 			return false;
@@ -119,16 +144,18 @@ public class OfflineTokenValidationService {
 		List<String> scopesFromToken = scopes.getValuesAs(JsonString::getString);
 		if (tokenIntrospectionRequest.isStrictScopeValidation() == true && 
 				!scopesFromToken.containsAll(tokenIntrospectionRequest.getScopes())) {
+			LOG.warn("token doesn't have enough scopes!");
 			return false;
 		} 
 		if (tokenIntrospectionRequest.isStrictScopeValidation() == false && 
 				!scopesFromToken.stream().anyMatch(element -> tokenIntrospectionRequest.getScopes().contains(element))) {
+			LOG.warn("token doesn't have enough scopes!");
 			return false;
 		}
 		return true;
 	}
 	
-	public boolean validateRoles(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) { 
+	private boolean validateRoles(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) { 
 		JsonArray roles = payload.getJsonArray("roles");
 		if (roles == null) {
 			return false;
@@ -136,16 +163,18 @@ public class OfflineTokenValidationService {
 		List<String> rolesFromToken = roles.getValuesAs(JsonString::getString);
 		if(tokenIntrospectionRequest.isStrictRoleValidation() == true && 
 				!rolesFromToken.containsAll(tokenIntrospectionRequest.getRoles())) {
+			LOG.warn("token doesn't have enough roles!");
 			return false;
 		} 
 		if (tokenIntrospectionRequest.isStrictRoleValidation() == false && 
 				!rolesFromToken.stream().anyMatch(element -> tokenIntrospectionRequest.getRoles().contains(element))) {
+			LOG.warn("token doesn't have enough roles!");
 			return false;
-			}
+		}
 		return true;
 	}
 	
-	public boolean validateGroups(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
+	private boolean validateGroups(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
 		JsonArray groups = payload.getJsonArray("groups");
 		if (groups == null) {
 			return false;
@@ -171,6 +200,7 @@ public class OfflineTokenValidationService {
 			if (isGroupValid == false) {
 				isAllGroupValid = false;
 				if (strictGroupValidation == true) {
+					LOG.warn("token doesn't have enough groups!");
 					return false;
 				}
 			}
@@ -180,7 +210,7 @@ public class OfflineTokenValidationService {
 
 	}
 	
-	public boolean validateGroup(Group groupFromIntrospectionRequest, List<Group> groupsFromToken ) {
+	private boolean validateGroup(Group groupFromIntrospectionRequest, List<Group> groupsFromToken ) {
 		String groupIdFromIntrospectionRequest = groupFromIntrospectionRequest.getGroupId();
 		List<String> groupRolesFromIntrospectionRequest = groupFromIntrospectionRequest.getRoles();
 		boolean strictGroupRoleValidation = groupFromIntrospectionRequest.isStrictRoleValidation();
@@ -195,6 +225,7 @@ public class OfflineTokenValidationService {
 				}		
 			}
 		}
+		LOG.warn("grouproles is invalid!");
 		return false;
 	}
 	
