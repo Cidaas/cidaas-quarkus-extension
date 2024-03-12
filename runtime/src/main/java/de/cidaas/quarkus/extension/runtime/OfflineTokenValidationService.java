@@ -198,7 +198,7 @@ public class OfflineTokenValidationService {
 		return false;
 	}
 	
-	String getStringFromJsonOrNull(JsonObject jsonObject, String key) {
+	private String getStringFromJsonOrNull(JsonObject jsonObject, String key) {
 		JsonString jsonString = jsonObject.getJsonString(key);
 		if (jsonString == null) {
 			return null;

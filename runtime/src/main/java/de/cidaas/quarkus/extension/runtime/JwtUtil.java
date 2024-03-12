@@ -18,7 +18,7 @@ public class JwtUtil {
 		return decode(arr[1]);
 	}
 	
-	static JsonObject decode(String encoded) {
+	private static JsonObject decode(String encoded) {
 		Base64.Decoder decoder = Base64.getDecoder();
 		byte[] decodedBytes = decoder.decode(encoded);
 		String decodedString = new String(decodedBytes);
