@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import de.cidaas.quarkus.extension.CidaasQuarkusException;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.runtime.MockService.IntrospectionOptions;
 import de.cidaas.quarkus.extension.runtime.MockService.PayloadOptions;

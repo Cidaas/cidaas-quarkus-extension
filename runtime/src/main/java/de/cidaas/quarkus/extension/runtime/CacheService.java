@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.cidaas.quarkus.extension.CidaasClient;
+import de.cidaas.quarkus.extension.CidaasQuarkusException;
 import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.runtime.ShutdownEvent;

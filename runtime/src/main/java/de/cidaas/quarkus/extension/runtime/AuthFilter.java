@@ -8,6 +8,7 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.cidaas.quarkus.extension.CidaasQuarkusException;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.TokenValidation;
 import jakarta.inject.Inject;

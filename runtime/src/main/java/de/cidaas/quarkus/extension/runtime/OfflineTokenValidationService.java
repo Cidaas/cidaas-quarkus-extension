@@ -8,6 +8,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.cidaas.quarkus.extension.CidaasQuarkusException;
 import de.cidaas.quarkus.extension.Group;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import jakarta.enterprise.context.ApplicationScoped;

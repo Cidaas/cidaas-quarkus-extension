@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension;
 
 public class CidaasQuarkusException extends RuntimeException {
 	public CidaasQuarkusException(String message){
