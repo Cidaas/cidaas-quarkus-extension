@@ -18,7 +18,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 
 @ApplicationScoped
-public class OfflineTokenValidationService {	
+public class OfflineTokenValidationService implements IntrospectionService {	
 	@Inject
 	CacheService cacheService;
 	
@@ -31,6 +31,7 @@ public class OfflineTokenValidationService {
      * 
      * @return true if tokenIntrospectionRequest is valid, false if invalid
      */
+	@Override
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {	
 		JsonObject header = JwtUtil.decodeHeader(tokenIntrospectionRequest.getToken());
 		

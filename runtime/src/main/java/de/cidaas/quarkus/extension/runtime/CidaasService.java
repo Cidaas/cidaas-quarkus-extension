@@ -11,12 +11,13 @@ import jakarta.json.JsonObject;
 import jakarta.ws.rs.core.Response;
 
 @RequestScoped
-public class CidaasService {
+public class CidaasService implements IntrospectionService {
 	
 	@Inject
 	@RestClient
 	CidaasClient cidaasClient;
 		
+	@Override
 	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {
 		Response response = cidaasClient.callIntrospection(tokenIntrospectionRequest);
 		if (response == null) {
