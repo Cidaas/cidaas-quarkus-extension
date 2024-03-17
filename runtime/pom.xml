@@ -40,6 +40,10 @@
 	    <artifactId>quarkus-junit5-mockito</artifactId>
 	    <scope>test</scope>
 	</dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	</dependency>
   </dependencies>
   <build>
     <plugins>

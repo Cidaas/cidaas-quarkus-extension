@@ -1,9 +1,11 @@
 package de.cidaas.quarkus.extension.deployment;
 
+import de.cidaas.quarkus.extension.AddressValidationRequest;
+import de.cidaas.quarkus.extension.AddressValidationResult;
 import de.cidaas.quarkus.extension.GroupAllowed;
 import de.cidaas.quarkus.extension.TokenValidation;
+import de.cidaas.quarkus.extension.runtime.AddressValidationService;
 import de.cidaas.quarkus.extension.runtime.AuthFilter;
-import de.cidaas.quarkus.extension.runtime.CidaasService;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -24,14 +26,10 @@ class CidaasQuarkusExtensionProcessor {
     }
     
     @BuildStep
-    AdditionalBeanBuildItem registerCidaasService() {
-        return new AdditionalBeanBuildItem(CidaasService.class);
-    }
-    
-    @BuildStep
-    AdditionalBeanBuildItem registerAnnotations() {
+    AdditionalBeanBuildItem registerAdditonalBeans() {
         return AdditionalBeanBuildItem.builder()
-                .addBeanClasses(TokenValidation.class, GroupAllowed.class)
+                .addBeanClasses(TokenValidation.class, GroupAllowed.class, AddressValidationService.class, 
+                					AddressValidationRequest.class, AddressValidationResult.class)
                 .build();
     }
 }

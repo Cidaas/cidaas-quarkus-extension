@@ -19,10 +19,16 @@ From Maven pom.xml, add the following dependency:
 After adding extension dependency, add the following line to application.properties file:
 
 ```java
-de.cidaas.quarkus.extension.CidaasClient/mp-rest/url=<your_cidaas_base_url>
+de.cidaas.quarkus.extension.CidaasClient/mp-rest/url=<cidaas_base_url>
 ```
 
 It will ensure a correct api url to be called for token verification.
+
+To use Email Validation feature, jndi has to be enabled by adding the following line to application.properties.
+
+```java
+quarkus.naming.enable-jndi=true
+```
 
 By default, jwk list will be cached for offline validation purpose. The frequency to refresh jwk could be overwrite by adding the following line to application.properties file:
 
@@ -32,11 +38,18 @@ de.cidaas.quarkus.extension.cache-refresh-rate=216000s
 
 the above example will refresh jwk list each 6 hour. This Configuration is optional, and the default value is 86400s (1 day).
 
+To use Address Validation feature, apicid & apikey are need to be provided. The .env file could be used for storing and using credentials in development mode. The .env file looks like the following:
 
+```java
+de.cidaas.quarkus.extension.address.validation.apicid=<apicid>
+de.cidaas.quarkus.extension.address.validation.apikey=<apikey>
+```
 
 ## Usage
 
-To do token verification either by using cidaas introspection endpoint or using offline token validation, you will need to add the @TokenValidation annotation to your function. The annotation support the following optional members:
+### Token Validation
+
+To do token validation either by using cidaas introspection endpoint or using offline token validation, add the @TokenValidation annotation to the function. The annotation support the following optional members:
 
 | Name                  | Description                                                                                                                                                                                                         | Default Value |
 |-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
@@ -58,7 +71,7 @@ to validate groups, @GroupAllowed Annotation(s) have to be added. It has the fol
 | roles                | List of group roles, which are allowed to access secured api                                                         | yes                        |
 | strictRoleValidation | If true, user will need all roles from the group roles list to access api. By default, user only need 1 of the roles | no, default value is false |
 
-Examples of  function being secured with cidaas quarkus extension looks like the following:
+Examples of function being secured with cidaas quarkus extension looks like the following:
 
 * User need only to be authenticated, without having any roles, groups or scopes to access the api
 ```java
@@ -165,5 +178,45 @@ public String helloProtected() {
 )
 public String helloProtected() {
     return "Hello from protected api";
+}
+```
+
+### Address Validation
+
+To do address & email validation, inject AddressValidationService to the class which will be calling the validation.
+
+Examples of address validation usage looks like the following:
+
+* Address Validation
+```java
+@Inject
+AddressValidationService addressValidationService;
+
+@GET
+@Path("/validate-address")
+@Produces(MediaType.TEXT_PLAIN)
+public String validateValidAddress() {
+    AddressValidationRequest request = new AddressValidationRequest();
+    request.setStreet("examplsstr.");
+    request.setHouseNumber("1");
+    request.setZipCode("11111");
+    request.setCity("exampleCity");
+    
+    AddressValidationResult result = addressValidationService.validateAddress(request);
+    return "Address Validation Result is " + result.getResulttext();
+}
+```
+
+* Email Validation
+```java
+@Inject
+AddressValidationService addressValidationService;
+
+@GET
+@Path("/validate-email")
+@Produces(MediaType.TEXT_PLAIN)
+public String validateValidAddress() {
+    boolean result = addressValidationService.validateEmail("alvin.chandra@widas.de");
+	return "Email Validation Result is " + result;
 }
 ```
