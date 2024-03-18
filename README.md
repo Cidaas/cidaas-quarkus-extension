@@ -32,12 +32,6 @@ de.cidaas.quarkus.extension.cache-refresh-rate=216000s
 
 the above example will refresh jwk list each 6 hour. This Configuration is optional, and the default value is 86400s (1 day).
 
-To use Email Validation feature, jndi has to be enabled by adding the following line to application.properties.
-
-```java
-quarkus.naming.enable-jndi=true
-```
-
 To use Address Validation feature, apicid & apikey are need to be provided. The .env file could be used for storing and using credentials in development mode. The .env file looks like the following:
 
 ```java
