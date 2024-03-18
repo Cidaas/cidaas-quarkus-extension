@@ -94,14 +94,19 @@ public class OfflineTokenValidationService implements IntrospectionService {
 			throw new CidaasQuarkusException("JWK invalid!");
 		}
 
-		String kid = this.getStringFromJsonOrNull(header, "kid");
-		String alg = this.getStringFromJsonOrNull(header, "alg");
+		String kid = header.getString("kid", null);
+		String alg = header.getString("alg", null);
+		
+		if (kid == null || alg == null) {
+			LOG.error("header is invalid!");
+			throw new CidaasQuarkusException("Header invalid!");
+		}
 
 		for (int i = 0; i < keys.size(); i++) {
 			JsonObject key = keys.getJsonObject(i);
 			String keyKid = key.getString("kid");
 			String keyAlg = key.getString("alg");
-			if (keyKid.equals(kid) && keyAlg.equals(alg)) {
+			if (kid.equals(keyKid) && alg.equals(keyAlg)) {
 				return true;
 			}
 		}
@@ -119,12 +124,12 @@ public class OfflineTokenValidationService implements IntrospectionService {
 		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.CidaasClient/mp-rest/url",
 				String.class);
 
-		if (this.getStringFromJsonOrNull(payload, "iss") == null) {
+		if (payload.getString("iss", null) == null) {
 			LOG.warn("token doesn't have iss!");
 			return false;
 		}
 
-		if (!this.getStringFromJsonOrNull(payload, "iss").equals(baseUrl)) {
+		if (!payload.getString("iss").equals(baseUrl)) {
 			LOG.warn("iss is invalid!");
 			return false;
 		}
@@ -233,14 +238,6 @@ public class OfflineTokenValidationService implements IntrospectionService {
 		}
 		LOG.warn("grouproles is invalid!");
 		return false;
-	}
-
-	private String getStringFromJsonOrNull(JsonObject jsonObject, String key) {
-		JsonString jsonString = jsonObject.getJsonString(key);
-		if (jsonString == null) {
-			return null;
-		}
-		return jsonString.getString();
 	}
 
 }

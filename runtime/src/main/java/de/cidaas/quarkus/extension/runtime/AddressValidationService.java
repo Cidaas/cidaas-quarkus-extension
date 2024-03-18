@@ -1,7 +1,5 @@
 package de.cidaas.quarkus.extension.runtime;
 
-import static de.cidaas.quarkus.extension.runtime.JsonUtil.getStringFromJsonOrNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -86,7 +84,6 @@ public class AddressValidationService {
 		JsonObject resultAsJson = response.readEntity(JsonObject.class).getJsonArray("sc").getJsonObject(0);
 
 		AddressValidationResult result = new AddressValidationResult();
-		getStringFromJsonOrNull(resultAsJson, "street");
 		result.setStreet(resultAsJson.getString("street"));
 		result.setHouseNumber(resultAsJson.getString("hno"));
 		result.setZipCode(resultAsJson.getString("zip"));
