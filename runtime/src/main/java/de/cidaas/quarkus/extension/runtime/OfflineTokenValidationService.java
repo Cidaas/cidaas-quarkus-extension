@@ -8,7 +8,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.CidaasQuarkusException;
+import de.cidaas.quarkus.extension.TokenValidationException;
 import de.cidaas.quarkus.extension.Group;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -84,14 +84,14 @@ public class OfflineTokenValidationService implements IntrospectionService {
 
 		if (jwks == null) {
 			LOG.error("jwk is null!");
-			throw new CidaasQuarkusException("JWK invalid!");
+			throw new TokenValidationException("JWK invalid!");
 		}
 
 		JsonArray keys = jwks.getJsonArray("keys");
 
 		if (keys == null || keys.isEmpty()) {
 			LOG.error("keys couldn't be found!");
-			throw new CidaasQuarkusException("JWK invalid!");
+			throw new TokenValidationException("JWK invalid!");
 		}
 
 		String kid = header.getString("kid", null);
@@ -99,7 +99,7 @@ public class OfflineTokenValidationService implements IntrospectionService {
 		
 		if (kid == null || alg == null) {
 			LOG.error("header is invalid!");
-			throw new CidaasQuarkusException("Header invalid!");
+			throw new TokenValidationException("Header invalid!");
 		}
 
 		for (int i = 0; i < keys.size(); i++) {

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.cidaas.quarkus.extension.CidaasQuarkusException;
+import de.cidaas.quarkus.extension.TokenValidationException;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.runtime.MockService.IntrospectionOptions;
 import de.cidaas.quarkus.extension.runtime.MockService.PayloadOptions;
@@ -291,7 +291,7 @@ public class OfflineTokenValidationServiceTest {
 	public void testValidateTokenHeader_emptyJwks() {
 		JsonObject emptyJwks = Json.createObjectBuilder().add("keys", Json.createArrayBuilder()).build();
 		when(cacheService.getJwks()).thenReturn(emptyJwks);
-		CidaasQuarkusException exception = assertThrows(CidaasQuarkusException.class, () -> {
+		TokenValidationException exception = assertThrows(TokenValidationException.class, () -> {
 			offlineTokenValidationService.validateTokenHeader(header);
 		});
 		assertTrue(exception.getMessage().contains("JWK invalid!"));

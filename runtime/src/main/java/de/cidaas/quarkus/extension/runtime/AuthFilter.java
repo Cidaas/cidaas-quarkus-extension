@@ -8,7 +8,7 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.CidaasQuarkusException;
+import de.cidaas.quarkus.extension.TokenValidationException;
 import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
 import de.cidaas.quarkus.extension.TokenValidation;
 import jakarta.inject.Inject;
@@ -32,11 +32,11 @@ public class AuthFilter {
 	@ServerRequestFilter
 	public Optional<RestResponse<Void>> getFilter(ContainerRequestContext requestContext) {
 		if (resourceInfo == null) {
-			throw new CidaasQuarkusException("resourceInfo is null!");
+			throw new TokenValidationException("resourceInfo is null!");
 		}
 
 		if (resourceInfo.getResourceMethod() == null) {
-			throw new CidaasQuarkusException("resourceMethod is null!");
+			throw new TokenValidationException("resourceMethod is null!");
 		}
 
 		Method method = resourceInfo.getResourceMethod();
@@ -66,7 +66,7 @@ public class AuthFilter {
 				tokenValidation);
 
 		if (tokenIntrospectionRequest == null) {
-			throw new CidaasQuarkusException("tokenIntrospectionRequest is null!");
+			throw new TokenValidationException("tokenIntrospectionRequest is null!");
 		}
 
 		boolean valid = tokenValidation.offlineValidation() == true

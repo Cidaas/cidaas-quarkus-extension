@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.cidaas.quarkus.extension.CidaasClient;
-import de.cidaas.quarkus.extension.CidaasQuarkusException;
+import de.cidaas.quarkus.extension.TokenValidationException;
 import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.runtime.ShutdownEvent;
@@ -34,7 +34,7 @@ public class CacheService {
 	JsonObject getJwks() {
 		Response response = cidaasClient.getJwks();
 		if (response == null) {
-			throw new CidaasQuarkusException("response of jwks is null!");
+			throw new TokenValidationException("response of jwks is null!");
 		}
 		return response.readEntity(JsonObject.class);
 	}
