@@ -9,10 +9,8 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
 import de.cidaas.quarkus.extension.annotation.GroupAllowed;
 import de.cidaas.quarkus.extension.annotation.TokenValidation;
-import de.cidaas.quarkus.extension.token.validation.TokenValidationMapper;
 
 public class TokenValidationMapperTest {
 	@Test

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.cidaas.quarkus.extension.token.validation.Group;
-import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
