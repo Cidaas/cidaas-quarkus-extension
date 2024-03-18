@@ -19,7 +19,7 @@ From Maven pom.xml, add the following dependency:
 After adding extension dependency, add the following line to application.properties file:
 
 ```java
-de.cidaas.quarkus.extension.CidaasClient/mp-rest/url=<cidaas_base_url>
+de.cidaas.quarkus.extension.runtime.CidaasClient/mp-rest/url=<cidaas_base_url>
 ```
 
 It will ensure a correct api url to be called for token validation.

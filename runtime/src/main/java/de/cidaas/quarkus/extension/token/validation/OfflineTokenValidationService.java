@@ -119,7 +119,7 @@ public class OfflineTokenValidationService implements ValidationService {
 	 * @return true if payload is valid, false if invalid
 	 */
 	boolean validateGeneralInfo(JsonObject payload) {
-		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.CidaasClient/mp-rest/url",
+		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.runtime.CidaasClient/mp-rest/url",
 				String.class);
 
 		if (payload.getString("iss", null) == null) {
