@@ -2,15 +2,15 @@ package de.cidaas.quarkus.extension;
 
 public class AddressValidationResult {
 	private String street;
-    private String houseNumber;
-    private String zipCode;
-    private String city;
-    private String district;
-    private String country;
-    private String points;
-    private String resultcode;
-    private String resulttext;
-    private String trafficlight;
+	private String houseNumber;
+	private String zipCode;
+	private String city;
+	private String district;
+	private String country;
+	private String points;
+	private String resultcode;
+	private String resulttext;
+	private String trafficlight;
 
 	public String getStreet() {
 		return street;
@@ -91,8 +91,5 @@ public class AddressValidationResult {
 	public void setTrafficlight(String trafficlight) {
 		this.trafficlight = trafficlight;
 	}
-	
-	
-    
-    
+
 }
