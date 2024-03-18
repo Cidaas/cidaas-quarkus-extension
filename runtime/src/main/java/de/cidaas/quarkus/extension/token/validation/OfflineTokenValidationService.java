@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -8,9 +8,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.TokenValidationException;
-import de.cidaas.quarkus.extension.Group;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
+import de.cidaas.quarkus.extension.runtime.CacheService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArray;
@@ -18,29 +16,29 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 
 @ApplicationScoped
-public class OfflineTokenValidationService implements IntrospectionService {
+public class OfflineTokenValidationService implements ValidationService {
 	@Inject
 	CacheService cacheService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(OfflineTokenValidationService.class);
 
 	/**
-	 * introspect token without calling introspection endpoint.
+	 * validate token without calling introspection endpoint.
 	 *
-	 * @param TokenIntrospectionRequest contain access token & definition which
+	 * @param TokenValidationRequest contain access token & definition which
 	 *                                  claims to be validated and how.
 	 * 
-	 * @return true if tokenIntrospectionRequest is valid, false if invalid
+	 * @return true if tokenValidationRequest is valid, false if invalid
 	 */
 	@Override
-	public boolean introspectToken(TokenIntrospectionRequest tokenIntrospectionRequest) {
-		JsonObject header = JwtUtil.decodeHeader(tokenIntrospectionRequest.getToken());
+	public boolean validateToken(TokenValidationRequest tokenValidationRequest) {
+		JsonObject header = JwtUtil.decodeHeader(tokenValidationRequest.getToken());
 
 		if (header == null || validateTokenHeader(header) == false) {
 			return false;
 		}
 
-		JsonObject payload = JwtUtil.decodePayload(tokenIntrospectionRequest.getToken());
+		JsonObject payload = JwtUtil.decodePayload(tokenValidationRequest.getToken());
 
 		if (payload == null || validateGeneralInfo(payload) == false) {
 			return false;
@@ -48,23 +46,23 @@ public class OfflineTokenValidationService implements IntrospectionService {
 
 		List<Boolean> toBeValidated = new ArrayList<>();
 
-		if (tokenIntrospectionRequest.getScopes() != null && !tokenIntrospectionRequest.getScopes().isEmpty()) {
-			toBeValidated.add(validateScopes(tokenIntrospectionRequest, payload));
+		if (tokenValidationRequest.getScopes() != null && !tokenValidationRequest.getScopes().isEmpty()) {
+			toBeValidated.add(validateScopes(tokenValidationRequest, payload));
 		}
 
-		if (tokenIntrospectionRequest.getRoles() != null && !tokenIntrospectionRequest.getRoles().isEmpty()) {
-			toBeValidated.add(validateRoles(tokenIntrospectionRequest, payload));
+		if (tokenValidationRequest.getRoles() != null && !tokenValidationRequest.getRoles().isEmpty()) {
+			toBeValidated.add(validateRoles(tokenValidationRequest, payload));
 		}
 
-		if (tokenIntrospectionRequest.getGroups() != null && !tokenIntrospectionRequest.getGroups().isEmpty()) {
-			toBeValidated.add(validateGroups(tokenIntrospectionRequest, payload));
+		if (tokenValidationRequest.getGroups() != null && !tokenValidationRequest.getGroups().isEmpty()) {
+			toBeValidated.add(validateGroups(tokenValidationRequest, payload));
 		}
 
 		if (toBeValidated.isEmpty() == true) {
 			return true;
 		}
 
-		if (tokenIntrospectionRequest.isStrictValidation() == true) {
+		if (tokenValidationRequest.isStrictValidation() == true) {
 			return !toBeValidated.contains(false);
 		}
 
@@ -145,50 +143,50 @@ public class OfflineTokenValidationService implements IntrospectionService {
 		return true;
 	}
 
-	private boolean validateScopes(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
+	private boolean validateScopes(TokenValidationRequest tokenValidationRequest, JsonObject payload) {
 		JsonArray scopes = payload.getJsonArray("scopes");
 		if (scopes == null) {
 			return false;
 		}
 		List<String> scopesFromToken = scopes.getValuesAs(JsonString::getString);
-		if (tokenIntrospectionRequest.isStrictScopeValidation() == true
-				&& !scopesFromToken.containsAll(tokenIntrospectionRequest.getScopes())) {
+		if (tokenValidationRequest.isStrictScopeValidation() == true
+				&& !scopesFromToken.containsAll(tokenValidationRequest.getScopes())) {
 			LOG.warn("token doesn't have enough scopes!");
 			return false;
 		}
-		if (tokenIntrospectionRequest.isStrictScopeValidation() == false && !scopesFromToken.stream()
-				.anyMatch(element -> tokenIntrospectionRequest.getScopes().contains(element))) {
+		if (tokenValidationRequest.isStrictScopeValidation() == false && !scopesFromToken.stream()
+				.anyMatch(element -> tokenValidationRequest.getScopes().contains(element))) {
 			LOG.warn("token doesn't have enough scopes!");
 			return false;
 		}
 		return true;
 	}
 
-	private boolean validateRoles(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
+	private boolean validateRoles(TokenValidationRequest tokenValidationRequest, JsonObject payload) {
 		JsonArray roles = payload.getJsonArray("roles");
 		if (roles == null) {
 			return false;
 		}
 		List<String> rolesFromToken = roles.getValuesAs(JsonString::getString);
-		if (tokenIntrospectionRequest.isStrictRoleValidation() == true
-				&& !rolesFromToken.containsAll(tokenIntrospectionRequest.getRoles())) {
+		if (tokenValidationRequest.isStrictRoleValidation() == true
+				&& !rolesFromToken.containsAll(tokenValidationRequest.getRoles())) {
 			LOG.warn("token doesn't have enough roles!");
 			return false;
 		}
-		if (tokenIntrospectionRequest.isStrictRoleValidation() == false && !rolesFromToken.stream()
-				.anyMatch(element -> tokenIntrospectionRequest.getRoles().contains(element))) {
+		if (tokenValidationRequest.isStrictRoleValidation() == false && !rolesFromToken.stream()
+				.anyMatch(element -> tokenValidationRequest.getRoles().contains(element))) {
 			LOG.warn("token doesn't have enough roles!");
 			return false;
 		}
 		return true;
 	}
 
-	private boolean validateGroups(TokenIntrospectionRequest tokenIntrospectionRequest, JsonObject payload) {
+	private boolean validateGroups(TokenValidationRequest tokenValidationRequest, JsonObject payload) {
 		JsonArray groups = payload.getJsonArray("groups");
 		if (groups == null) {
 			return false;
 		}
-		boolean strictGroupValidation = tokenIntrospectionRequest.isStrictGroupValidation();
+		boolean strictGroupValidation = tokenValidationRequest.isStrictGroupValidation();
 		boolean isAllGroupValid = true;
 
 		List<Group> groupsFromToken = new ArrayList<>();
@@ -200,8 +198,8 @@ public class OfflineTokenValidationService implements IntrospectionService {
 			groupsFromToken.add(group);
 		}
 
-		for (Group groupFromIntrospectionRequest : tokenIntrospectionRequest.getGroups()) {
-			boolean isGroupValid = validateGroup(groupFromIntrospectionRequest, groupsFromToken);
+		for (Group groupFromValidationRequest : tokenValidationRequest.getGroups()) {
+			boolean isGroupValid = validateGroup(groupFromValidationRequest, groupsFromToken);
 
 			if (isGroupValid == true && strictGroupValidation == false) {
 				return true;
@@ -219,19 +217,19 @@ public class OfflineTokenValidationService implements IntrospectionService {
 
 	}
 
-	private boolean validateGroup(Group groupFromIntrospectionRequest, List<Group> groupsFromToken) {
-		String groupIdFromIntrospectionRequest = groupFromIntrospectionRequest.getGroupId();
-		List<String> groupRolesFromIntrospectionRequest = groupFromIntrospectionRequest.getRoles();
-		boolean strictGroupRoleValidation = groupFromIntrospectionRequest.isStrictRoleValidation();
+	private boolean validateGroup(Group groupFromValidationRequest, List<Group> groupsFromToken) {
+		String groupIdFromValidationRequest = groupFromValidationRequest.getGroupId();
+		List<String> groupRolesFromValidationRequest = groupFromValidationRequest.getRoles();
+		boolean strictGroupRoleValidation = groupFromValidationRequest.isStrictRoleValidation();
 
 		for (Group groupFromToken : groupsFromToken) {
-			if (groupFromToken.getGroupId().equals(groupIdFromIntrospectionRequest)) {
+			if (groupFromToken.getGroupId().equals(groupIdFromValidationRequest)) {
 				if (strictGroupRoleValidation == true
-						&& groupFromToken.getRoles().containsAll(groupRolesFromIntrospectionRequest)) {
+						&& groupFromToken.getRoles().containsAll(groupRolesFromValidationRequest)) {
 					return true;
 				}
 				if (strictGroupRoleValidation == false && groupFromToken.getRoles().stream()
-						.anyMatch(element -> groupRolesFromIntrospectionRequest.contains(element))) {
+						.anyMatch(element -> groupRolesFromValidationRequest.contains(element))) {
 					return true;
 				}
 			}

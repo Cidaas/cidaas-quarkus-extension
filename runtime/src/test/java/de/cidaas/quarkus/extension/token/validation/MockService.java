@@ -1,12 +1,12 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.cidaas.quarkus.extension.Group;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
+import de.cidaas.quarkus.extension.token.validation.Group;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -19,7 +19,7 @@ public class MockService {
 		return "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlzcyI6Iklzc3VlciIsImV4cCI6IjIwMjQtMDMtMTJUMTg6MzE6MjAuMzk2WiIsImlhdCI6IjIwMjQtMDMtMTJUMTI6MzE6MjAuMzk2WiJ9.ADYf1qQy11JJH3T2YPlXyDmIzggflj1O7zXKsUZc8fg";
 	}
 
-	JsonObject createJwks() {
+	public JsonObject createJwks() {
 		JsonObject jwks = Json.createObjectBuilder()
 				.add("keys",
 						Json.createArrayBuilder().add(Json.createObjectBuilder().add("alg", "abc").add("kid", "def"))
@@ -110,30 +110,30 @@ public class MockService {
 		return builder.build();
 	}
 
-	TokenIntrospectionRequest createIntrospectionRequest() {
-		return createIntrospectionRequest(
-				Arrays.asList(IntrospectionOptions.ROLE, IntrospectionOptions.SCOPE, IntrospectionOptions.GROUP));
+	public TokenValidationRequest createValidationRequest() {
+		return createValidationRequest(
+				Arrays.asList(ValidationOptions.ROLE, ValidationOptions.SCOPE, ValidationOptions.GROUP));
 	}
 
-	TokenIntrospectionRequest createIntrospectionRequest(List<IntrospectionOptions> options) {
-		TokenIntrospectionRequest result = new TokenIntrospectionRequest();
-		if (options.contains(IntrospectionOptions.ROLE)) {
+	TokenValidationRequest createValidationRequest(List<ValidationOptions> options) {
+		TokenValidationRequest result = new TokenValidationRequest();
+		if (options.contains(ValidationOptions.ROLE)) {
 			result.setRoles(Arrays.asList("role1", "role2"));
 		}
-		if (options.contains(IntrospectionOptions.SCOPE)) {
+		if (options.contains(ValidationOptions.SCOPE)) {
 			result.setScopes(Arrays.asList("scope1", "scope2"));
 		}
-		if (options.contains(IntrospectionOptions.GROUP)) {
-			boolean strictGrouproleValidation = (options.contains(IntrospectionOptions.GROUPROLE_STRICT));
+		if (options.contains(ValidationOptions.GROUP)) {
+			boolean strictGrouproleValidation = (options.contains(ValidationOptions.GROUPROLE_STRICT));
 			List<Group> groups = new ArrayList<>();
 			groups.add(new Group("group1", Arrays.asList("grouprole1", "grouprole2"), strictGrouproleValidation));
 			groups.add(new Group("group2", Arrays.asList("grouprole3", "grouprole4")));
 			result.setGroups(groups);
 		}
-		result.setStrictRoleValidation(options.contains(IntrospectionOptions.ROLE_STRICT));
-		result.setStrictGroupValidation(options.contains(IntrospectionOptions.GROUP_STRICT));
-		result.setStrictScopeValidation(options.contains(IntrospectionOptions.SCOPE_STRICT));
-		result.setStrictValidation(options.contains(IntrospectionOptions.VALIDATION_STRICT));
+		result.setStrictRoleValidation(options.contains(ValidationOptions.ROLE_STRICT));
+		result.setStrictGroupValidation(options.contains(ValidationOptions.GROUP_STRICT));
+		result.setStrictScopeValidation(options.contains(ValidationOptions.SCOPE_STRICT));
+		result.setStrictValidation(options.contains(ValidationOptions.VALIDATION_STRICT));
 		return result;
 	}
 
@@ -142,7 +142,7 @@ public class MockService {
 		ROLE_NOT_COMPLETE, GROUP_NOT_COMPLETE, GROUPROLE_NOT_COMPLETE, SCOPE_NOT_COMPLETE, ISS_INVALID, EXP_INVALID,
 	}
 
-	enum IntrospectionOptions {
+	enum ValidationOptions {
 		ROLE, GROUP, SCOPE, ROLE_STRICT, GROUP_STRICT, GROUPROLE_STRICT, SCOPE_STRICT, VALIDATION_STRICT
 	}
 }

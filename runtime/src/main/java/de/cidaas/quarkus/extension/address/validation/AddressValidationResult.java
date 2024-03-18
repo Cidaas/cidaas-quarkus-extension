@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension;
+package de.cidaas.quarkus.extension.address.validation;
 
 public class AddressValidationResult {
 	private String street;

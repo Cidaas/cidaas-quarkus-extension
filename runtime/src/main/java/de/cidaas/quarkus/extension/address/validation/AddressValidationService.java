@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.address.validation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -6,11 +6,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.AddressValidationClient;
-import de.cidaas.quarkus.extension.AddressValidationException;
-import de.cidaas.quarkus.extension.AddressValidationRequest;
-import de.cidaas.quarkus.extension.AddressValidationResult;
-import de.cidaas.quarkus.extension.SMTPMXLookup;
+import de.cidaas.quarkus.extension.runtime.CacheService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;

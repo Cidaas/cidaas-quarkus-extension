@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension;
+package de.cidaas.quarkus.extension.address.validation;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 

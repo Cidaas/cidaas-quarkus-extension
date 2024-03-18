@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,11 +9,12 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import de.cidaas.quarkus.extension.GroupAllowed;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
-import de.cidaas.quarkus.extension.TokenValidation;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
+import de.cidaas.quarkus.extension.annotation.GroupAllowed;
+import de.cidaas.quarkus.extension.annotation.TokenValidation;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationMapper;
 
-public class AnnotationsMapperTest {
+public class TokenValidationMapperTest {
 	@Test
 	public void testMapAnnotationEmpty() {
 		String accessToken = "";
@@ -68,7 +69,7 @@ public class AnnotationsMapperTest {
 				return false;
 			}
 		};
-		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
+		TokenValidationRequest result = TokenValidationMapper.mapToValidationRequest(accessToken, tokenValidation);
 		assertEquals(result.getToken(), accessToken);
 		assertNull(result.getToken_type_hint());
 		assertNull(result.getRoles());
@@ -181,7 +182,7 @@ public class AnnotationsMapperTest {
 				return false;
 			}
 		};
-		TokenIntrospectionRequest result = AnnotationsMapper.mapToIntrospectionRequest(accessToken, tokenValidation);
+		TokenValidationRequest result = TokenValidationMapper.mapToValidationRequest(accessToken, tokenValidation);
 		assertEquals(result.getToken(), accessToken);
 		assertEquals(result.getToken_type_hint(), tokenValidation.tokenTypeHint());
 		assertEquals(result.getRoles(), Arrays.asList(tokenValidation.roles()));

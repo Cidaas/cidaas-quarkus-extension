@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension;
+package de.cidaas.quarkus.extension.address.validation;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

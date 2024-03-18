@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension;
+package de.cidaas.quarkus.extension.token.validation;
 
 import java.util.List;
 

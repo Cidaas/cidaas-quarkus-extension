@@ -4,8 +4,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.CidaasClient;
-import de.cidaas.quarkus.extension.TokenValidationException;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationException;
 import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.runtime.ShutdownEvent;
@@ -31,7 +30,7 @@ public class CacheService {
 	}
 
 	@CacheResult(cacheName = "jwk-cache")
-	JsonObject getJwks() {
+	public JsonObject getJwks() {
 		Response response = cidaasClient.getJwks();
 		if (response == null) {
 			throw new TokenValidationException("response of jwks is null!");
@@ -44,7 +43,7 @@ public class CacheService {
 	}
 
 	@Scheduled(every = "${de.cidaas.quarkus.extension.cache-refresh-rate:86400s}") // 1 day by default
-	void refreshJwks() {
+	public void refreshJwks() {
 		clearJwkCache();
 		getJwks();
 		LOG.info("refresh JWK cache!");

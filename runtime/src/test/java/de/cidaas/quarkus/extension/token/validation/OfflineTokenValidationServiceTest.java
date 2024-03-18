@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.cidaas.quarkus.extension.TokenValidationException;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
-import de.cidaas.quarkus.extension.runtime.MockService.IntrospectionOptions;
-import de.cidaas.quarkus.extension.runtime.MockService.PayloadOptions;
+import de.cidaas.quarkus.extension.runtime.CacheService;
+import de.cidaas.quarkus.extension.runtime.CustomTestProfile;
+import de.cidaas.quarkus.extension.token.validation.MockService.PayloadOptions;
+import de.cidaas.quarkus.extension.token.validation.MockService.ValidationOptions;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
@@ -39,251 +39,251 @@ public class OfflineTokenValidationServiceTest {
 	CacheService cacheService;
 
 	JsonObject header;
-	TokenIntrospectionRequest tokenIntrospectionRequest;
+	TokenValidationRequest tokenValidationRequest;
 
 	@BeforeEach
 	public void initEach() {
 		when(cacheService.getJwks()).thenReturn(mockService.createJwks());
 		doNothing().when(cacheService).refreshJwks();
 		header = mockService.createHeader();
-		tokenIntrospectionRequest = mockService.createIntrospectionRequest();
+		tokenValidationRequest = mockService.createValidationRequest();
 	}
 
 	@Test
-	public void testIntrospectToken_noHeader() {
+	public void testValidateToken_noHeader() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(null);
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_noPayload() {
+	public void testValidateToken_noPayload() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(null);
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_scopeFlexibleInvalid() {
+	public void testValidateToken_scopeFlexibleInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_EXIST)));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_scopeFlexibleValid() {
+	public void testValidateToken_scopeFlexibleValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_COMPLETE)));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_scopeStrictInvalid() {
+	public void testValidateToken_scopeStrictInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_COMPLETE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.SCOPE, IntrospectionOptions.SCOPE_STRICT));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_scopeStrictValid() {
+	public void testValidateToken_scopeStrictValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.SCOPE, IntrospectionOptions.SCOPE_STRICT));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_roleFlexibleInvalid() {
+	public void testValidateToken_roleFlexibleInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.ROLE, PayloadOptions.ROLE_NOT_EXIST)));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_roleFlexibleValid() {
+	public void testValidateToken_roleFlexibleValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.ROLE, PayloadOptions.ROLE_NOT_COMPLETE)));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_roleStrictInvalid() {
+	public void testValidateToken_roleStrictInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.ROLE, PayloadOptions.ROLE_NOT_COMPLETE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.ROLE, IntrospectionOptions.ROLE_STRICT));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_roleStrictValid() {
+	public void testValidateToken_roleStrictValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.ROLE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.ROLE, IntrospectionOptions.ROLE_STRICT));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_groupFlexibleInvalid() {
+	public void testValidateToken_groupFlexibleInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.GROUP, PayloadOptions.GROUP_NOT_EXIST)));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_groupFlexibleValid() {
+	public void testValidateToken_groupFlexibleValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.GROUP, PayloadOptions.GROUP_NOT_COMPLETE)));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_groupStrictInvalid() {
+	public void testValidateToken_groupStrictInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.GROUP, PayloadOptions.GROUP_NOT_COMPLETE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.GROUP, IntrospectionOptions.GROUP_STRICT));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_groupStrictValid() {
+	public void testValidateToken_groupStrictValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.GROUP)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.GROUP, IntrospectionOptions.GROUP_STRICT));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_grouproleFlexibleInvalid() {
+	public void testValidateToken_grouproleFlexibleInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(mockService
 					.createPayload(Arrays.asList(PayloadOptions.GROUPROLE, PayloadOptions.GROUPROLE_NOT_EXIST)));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_grouproleFlexibleValid() {
+	public void testValidateToken_grouproleFlexibleValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(mockService
 					.createPayload(Arrays.asList(PayloadOptions.GROUPROLE, PayloadOptions.GROUPROLE_NOT_COMPLETE)));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_grouproleStrictInvalid() {
+	public void testValidateToken_grouproleStrictInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(mockService
 					.createPayload(Arrays.asList(PayloadOptions.GROUPROLE, PayloadOptions.GROUPROLE_NOT_COMPLETE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.GROUP, IntrospectionOptions.GROUPROLE_STRICT));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUPROLE_STRICT));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_grouproleStrictValid() {
+	public void testValidateToken_grouproleStrictValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.GROUPROLE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(
-					Arrays.asList(IntrospectionOptions.GROUP, IntrospectionOptions.GROUPROLE_STRICT));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(
+					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUPROLE_STRICT));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_flexibleValidationInvalid() {
+	public void testValidateToken_flexibleValidationInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.ROLE,
 							PayloadOptions.ROLE_NOT_EXIST, PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_EXIST)));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_flexibleValidationValid() {
+	public void testValidateToken_flexibleValidationValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(mockService.createPayload(
 					Arrays.asList(PayloadOptions.ROLE, PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_EXIST)));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_strictValidationInvalid() {
+	public void testValidateToken_strictValidationInvalid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(mockService.createPayload(
 					Arrays.asList(PayloadOptions.ROLE, PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_EXIST)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(Arrays.asList(IntrospectionOptions.ROLE,
-					IntrospectionOptions.SCOPE, IntrospectionOptions.VALIDATION_STRICT));
-			assertFalse(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(Arrays.asList(ValidationOptions.ROLE,
+					ValidationOptions.SCOPE, ValidationOptions.VALIDATION_STRICT));
+			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
 	@Test
-	public void testIntrospectToken_strictValidationValid() {
+	public void testValidateToken_strictValidationValid() {
 		try (MockedStatic<JwtUtil> mockStatic = Mockito.mockStatic(JwtUtil.class)) {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.ROLE, PayloadOptions.SCOPE)));
-			tokenIntrospectionRequest = mockService.createIntrospectionRequest(Arrays.asList(IntrospectionOptions.ROLE,
-					IntrospectionOptions.SCOPE, IntrospectionOptions.VALIDATION_STRICT));
-			assertTrue(offlineTokenValidationService.introspectToken(tokenIntrospectionRequest));
+			tokenValidationRequest = mockService.createValidationRequest(Arrays.asList(ValidationOptions.ROLE,
+					ValidationOptions.SCOPE, ValidationOptions.VALIDATION_STRICT));
+			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
 
@@ -300,7 +300,10 @@ public class OfflineTokenValidationServiceTest {
 	@Test
 	public void testValidateTokenHeader_missingHeaderClaim() {
 		JsonObject header = Json.createObjectBuilder().add("alg", "123").build();
-		assertFalse(offlineTokenValidationService.validateTokenHeader(header));
+		TokenValidationException exception = assertThrows(TokenValidationException.class, () -> {
+			offlineTokenValidationService.validateTokenHeader(header);
+		});
+		assertTrue(exception.getMessage().contains("Header invalid!"));
 	}
 
 	@Test

@@ -1,10 +1,10 @@
 package de.cidaas.quarkus.extension.deployment;
 
-import de.cidaas.quarkus.extension.AddressValidationRequest;
-import de.cidaas.quarkus.extension.AddressValidationResult;
-import de.cidaas.quarkus.extension.GroupAllowed;
-import de.cidaas.quarkus.extension.TokenValidation;
-import de.cidaas.quarkus.extension.runtime.AddressValidationService;
+import de.cidaas.quarkus.extension.address.validation.AddressValidationRequest;
+import de.cidaas.quarkus.extension.address.validation.AddressValidationResult;
+import de.cidaas.quarkus.extension.address.validation.AddressValidationService;
+import de.cidaas.quarkus.extension.annotation.GroupAllowed;
+import de.cidaas.quarkus.extension.annotation.TokenValidation;
 import de.cidaas.quarkus.extension.runtime.AuthFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;

@@ -1,4 +1,4 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

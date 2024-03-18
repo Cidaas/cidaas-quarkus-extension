@@ -1,8 +1,8 @@
-package de.cidaas.quarkus.extension;
+package de.cidaas.quarkus.extension.token.validation;
 
 import java.util.List;
 
-public class TokenIntrospectionRequest {
+public class TokenValidationRequest {
 	private String token;
 	private String token_type_hint;
 	private List<String> roles;
@@ -13,7 +13,7 @@ public class TokenIntrospectionRequest {
 	private boolean strictRoleValidation;
 	private boolean strictValidation;
 
-	public TokenIntrospectionRequest() {
+	public TokenValidationRequest() {
 		super();
 	}
 

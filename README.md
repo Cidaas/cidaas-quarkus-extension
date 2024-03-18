@@ -22,7 +22,7 @@ After adding extension dependency, add the following line to application.propert
 de.cidaas.quarkus.extension.CidaasClient/mp-rest/url=<cidaas_base_url>
 ```
 
-It will ensure a correct api url to be called for token verification.
+It will ensure a correct api url to be called for token validation.
 
 By default, jwk list will be cached for offline validation purpose. The frequency to refresh jwk could be overwrite by adding the following line to application.properties file:
 

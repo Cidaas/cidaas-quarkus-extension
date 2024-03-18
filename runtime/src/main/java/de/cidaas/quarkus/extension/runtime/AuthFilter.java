@@ -8,9 +8,11 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.cidaas.quarkus.extension.TokenValidationException;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
-import de.cidaas.quarkus.extension.TokenValidation;
+import de.cidaas.quarkus.extension.annotation.TokenValidation;
+import de.cidaas.quarkus.extension.token.validation.OfflineTokenValidationService;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationException;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ResourceInfo;
@@ -62,16 +64,16 @@ public class AuthFilter {
 			return Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 		}
 
-		TokenIntrospectionRequest tokenIntrospectionRequest = AnnotationsMapper.mapToIntrospectionRequest(accessToken,
+		TokenValidationRequest tokenValidationRequest = TokenValidationMapper.mapToValidationRequest(accessToken,
 				tokenValidation);
 
-		if (tokenIntrospectionRequest == null) {
-			throw new TokenValidationException("tokenIntrospectionRequest is null!");
+		if (tokenValidationRequest == null) {
+			throw new TokenValidationException("tokenValidationRequest is null!");
 		}
 
 		boolean valid = tokenValidation.offlineValidation() == true
-				? offlineTokenValidationService.introspectToken(tokenIntrospectionRequest)
-				: cidaasService.introspectToken(tokenIntrospectionRequest);
+				? offlineTokenValidationService.validateToken(tokenValidationRequest)
+				: cidaasService.validateToken(tokenValidationRequest);
 
 		return valid ? Optional.empty() : Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 	}

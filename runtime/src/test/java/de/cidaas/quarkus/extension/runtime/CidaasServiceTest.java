@@ -8,7 +8,8 @@ import static org.mockito.Mockito.when;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
+import de.cidaas.quarkus.extension.token.validation.MockService;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -29,12 +30,12 @@ public class CidaasServiceTest {
 	MockService mockService;
 
 	@Test
-	public void testCallIntrospectTokenWithRequest() {
+	public void testCallValidateTokenWithRequest() {
 		JsonObject body = Json.createObjectBuilder().add("active", true).build();
 		Response response = Response.ok(body).build();
-		TokenIntrospectionRequest request = mockService.createIntrospectionRequest();
-		when(cidaasClient.callIntrospection(request)).thenReturn(response);
-		assertTrue(cidaasService.introspectToken(request));
-		verify(cidaasClient, times(1)).callIntrospection(request);
+		TokenValidationRequest request = mockService.createValidationRequest();
+		when(cidaasClient.callValidateToken(request)).thenReturn(response);
+		assertTrue(cidaasService.validateToken(request));
+		verify(cidaasClient, times(1)).callValidateToken(request);
 	}
 }

@@ -2,8 +2,8 @@ package de.cidaas.quarkus.extension.runtime;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import de.cidaas.quarkus.extension.CidaasClient;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
+import de.cidaas.quarkus.extension.token.validation.MockService;
+import de.cidaas.quarkus.extension.token.validation.TokenValidationRequest;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
@@ -27,7 +27,7 @@ public class MockCidaasClient implements CidaasClient {
 	}
 
 	@Override
-	public Response callIntrospection(TokenIntrospectionRequest payload) {
+	public Response callValidateToken(TokenValidationRequest payload) {
 		return null;
 	}
 

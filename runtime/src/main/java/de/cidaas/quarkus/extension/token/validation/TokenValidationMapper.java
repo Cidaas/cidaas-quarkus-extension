@@ -1,26 +1,24 @@
-package de.cidaas.quarkus.extension.runtime;
+package de.cidaas.quarkus.extension.token.validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.cidaas.quarkus.extension.Group;
-import de.cidaas.quarkus.extension.GroupAllowed;
-import de.cidaas.quarkus.extension.TokenIntrospectionRequest;
-import de.cidaas.quarkus.extension.TokenValidation;
+import de.cidaas.quarkus.extension.annotation.GroupAllowed;
+import de.cidaas.quarkus.extension.annotation.TokenValidation;
 
-public class AnnotationsMapper {
+public class TokenValidationMapper {
 
 	/**
-	 * map TokenValidation to TokenIntrospectionRequest
+	 * map TokenValidation to TokenValidationRequest
 	 *
-	 * @param accessToken     token to be put on TokenIntrospectionRequest.
+	 * @param accessToken     token to be put on TokenValidationRequest.
 	 * @param tokenValidation input from method annotation.
 	 * 
-	 * @return TokenIntrospectionRequest
+	 * @return TokenValidationRequest
 	 */
-	static TokenIntrospectionRequest mapToIntrospectionRequest(String accessToken, TokenValidation tokenValidation) {
-		TokenIntrospectionRequest request = new TokenIntrospectionRequest();
+	public static TokenValidationRequest mapToValidationRequest(String accessToken, TokenValidation tokenValidation) {
+		TokenValidationRequest request = new TokenValidationRequest();
 
 		request.setToken(accessToken);
 		request.setToken_type_hint(tokenValidation.tokenTypeHint());
