@@ -48,6 +48,7 @@ public class AuthFilter {
 			return Optional.empty();
 		}
 
+		long validationStart = System.currentTimeMillis();
 		LOG.info("Filtering request to: {}", requestContext.getUriInfo().getAbsolutePath().toString());
 
 		String authorizationHeader = requestContext.getHeaderString("Authorization");
@@ -75,6 +76,7 @@ public class AuthFilter {
 				? offlineTokenValidationService.validateToken(tokenValidationRequest)
 				: cidaasService.validateToken(tokenValidationRequest);
 
+		LOG.info("Request to validate token took {}ms", System.currentTimeMillis() - validationStart);
 		return valid ? Optional.empty() : Optional.of(RestResponse.status(Response.Status.UNAUTHORIZED));
 	}
 }
