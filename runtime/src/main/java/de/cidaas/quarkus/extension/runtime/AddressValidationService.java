@@ -20,44 +20,48 @@ import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class AddressValidationService {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(CacheService.class);
-	
+
 	@Inject
 	@RestClient
 	AddressValidationClient addressValidationClient;
-	
+
 	/**
-     * Checks whether address is valid.
-     *
-     * @param request contains address information to be validated such as street, house number, zip code, city & country.
-     * @return AddressValidationResult contains details about Address Validation Result
-     */
+	 * Checks whether address is valid.
+	 *
+	 * @param request contains address information to be validated such as street,
+	 *                house number, zip code, city & country.
+	 * @return AddressValidationResult contains details about Address Validation
+	 *         Result
+	 */
 	public AddressValidationResult validateAddress(AddressValidationRequest request) {
 		validateInput(request);
-		
+
 		long validationStart = System.currentTimeMillis();
-		String apicid = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.address.validation.apicid", String.class);
-		String apikey = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.address.validation.apikey", String.class);
+		String apicid = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.address.validation.apicid",
+				String.class);
+		String apikey = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.address.validation.apikey",
+				String.class);
 		String productid = "SC";
 		String country = request.getCountry() == null ? request.getCountry() : "DE";
-		
+
 		long adresslaborStart = System.currentTimeMillis();
-		Response response = addressValidationClient.callValidateAddress( request.getStreet(), request.getHouseNumber(), request.getZipCode(), 
-																			request.getCity(), country, apicid, apikey, productid);
+		Response response = addressValidationClient.callValidateAddress(request.getStreet(), request.getHouseNumber(),
+				request.getZipCode(), request.getCity(), country, apicid, apikey, productid);
 		LOG.info("Request to adresslabor.de took {}ms", System.currentTimeMillis() - adresslaborStart);
-		
+
 		AddressValidationResult result = mapResponseToResult(response);
 		LOG.info("Request to validate postal address took {}ms", System.currentTimeMillis() - validationStart);
 		return result;
 	}
-	
+
 	/**
-     * Checks whether email is valid.
-     *
-     * @param email address to be validated
-     * @return true if email is valid, false if email is invalid
-     */
+	 * Checks whether email is valid.
+	 *
+	 * @param email address to be validated
+	 * @return true if email is valid, false if email is invalid
+	 */
 	public boolean validateEmail(String email) {
 		if (StringUtils.isBlank(email)) {
 			LOG.error("Provided email must not be null or blank");
@@ -71,15 +75,16 @@ public class AddressValidationService {
 		}
 		return isEmailValid;
 	}
-		
+
 	private AddressValidationResult mapResponseToResult(Response response) {
-		if (response == null || response.readEntity(JsonObject.class) == null || response.readEntity(JsonObject.class).getJsonArray("sc") == null || 
-				response.readEntity(JsonObject.class).getJsonArray("sc").getJsonObject(0) == null) {
+		if (response == null || response.readEntity(JsonObject.class) == null
+				|| response.readEntity(JsonObject.class).getJsonArray("sc") == null
+				|| response.readEntity(JsonObject.class).getJsonArray("sc").getJsonObject(0) == null) {
 			LOG.error("response of callValidateAddress has unexpected format");
 			throw new AddressValidationException("response of callValidateAddress has unexpected format.");
 		}
 		JsonObject resultAsJson = response.readEntity(JsonObject.class).getJsonArray("sc").getJsonObject(0);
-		
+
 		AddressValidationResult result = new AddressValidationResult();
 		getStringFromJsonOrNull(resultAsJson, "street");
 		result.setStreet(resultAsJson.getString("street"));
@@ -97,7 +102,7 @@ public class AddressValidationService {
 		}
 		return result;
 	}
-	
+
 	private void validateInput(AddressValidationRequest request) throws AddressValidationException {
 		if (StringUtils.isBlank(request.getStreet())) {
 			LOG.error("Provided street must not be null or blank");
@@ -112,6 +117,5 @@ public class AddressValidationService {
 			throw new AddressValidationException("Provided city must not be null or blank.");
 		}
 	}
-	
 
 }

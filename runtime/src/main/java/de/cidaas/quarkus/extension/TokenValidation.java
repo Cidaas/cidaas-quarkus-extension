@@ -9,12 +9,20 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface TokenValidation {
 	String tokenTypeHint() default "";
+
 	String[] roles() default {};
+
 	GroupAllowed[] groups() default {};
+
 	String[] scopes() default {};
+
 	boolean strictRoleValidation() default false;
+
 	boolean strictGroupValidation() default false;
+
 	boolean strictScopeValidation() default false;
+
 	boolean strictValidation() default false;
+
 	boolean offlineValidation() default false;
 }

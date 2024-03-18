@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface GroupAllowed {
 	String id();
-    String[] roles();
-    boolean strictRoleValidation() default false;
+
+	String[] roles();
+
+	boolean strictRoleValidation() default false;
 }

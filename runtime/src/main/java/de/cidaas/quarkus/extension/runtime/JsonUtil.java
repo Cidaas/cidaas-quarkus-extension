@@ -4,7 +4,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 
 public class JsonUtil {
-	
+
 	static String getStringFromJsonOrNull(JsonObject jsonObject, String key) {
 		JsonString jsonString = jsonObject.getJsonString(key);
 		if (jsonString == null) {
@@ -12,5 +12,5 @@ public class JsonUtil {
 		}
 		return jsonString.getString();
 	}
-	
+
 }

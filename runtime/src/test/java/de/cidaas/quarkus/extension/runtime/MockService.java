@@ -18,46 +18,36 @@ public class MockService {
 	String getToken() {
 		return "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlzcyI6Iklzc3VlciIsImV4cCI6IjIwMjQtMDMtMTJUMTg6MzE6MjAuMzk2WiIsImlhdCI6IjIwMjQtMDMtMTJUMTI6MzE6MjAuMzk2WiJ9.ADYf1qQy11JJH3T2YPlXyDmIzggflj1O7zXKsUZc8fg";
 	}
-	
+
 	JsonObject createJwks() {
 		JsonObject jwks = Json.createObjectBuilder()
-			.add("keys", Json.createArrayBuilder()
-				.add(Json.createObjectBuilder()
-					.add("alg", "abc")
-					.add("kid", "def")
-				)
-				.add(Json.createObjectBuilder()
-					.add("alg", "123")
-					.add("kid", "456")
-				)
-			)
-			.build();
+				.add("keys",
+						Json.createArrayBuilder().add(Json.createObjectBuilder().add("alg", "abc").add("kid", "def"))
+								.add(Json.createObjectBuilder().add("alg", "123").add("kid", "456")))
+				.build();
 		return jwks;
 	}
-	
+
 	JsonObject createHeader() {
-		JsonObject header = Json.createObjectBuilder()
-			.add("alg", "123")
-			.add("kid", "456")
-			.build();
+		JsonObject header = Json.createObjectBuilder().add("alg", "123").add("kid", "456").build();
 		return header;
 	}
-			
+
 	JsonObject createPayload(List<PayloadOptions> options) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		
+
 		if (options.contains(PayloadOptions.ISS_INVALID)) {
 			builder.add("iss", "invalidUrl");
 		} else {
 			builder.add("iss", "mockUrl");
 		}
-		
+
 		if (options.contains(PayloadOptions.EXP_INVALID)) {
 			builder.add("exp", Instant.now().getEpochSecond() - 3000);
 		} else {
 			builder.add("exp", Instant.now().getEpochSecond() + 3000);
 		}
-		
+
 		if (options.contains(PayloadOptions.ROLE)) {
 			if (options.contains(PayloadOptions.ROLE_NOT_EXIST)) {
 				builder.add("roles", Json.createArrayBuilder().add("roleOther1").add("roleOther2"));
@@ -67,7 +57,7 @@ public class MockService {
 				builder.add("roles", Json.createArrayBuilder().add("role1").add("role2"));
 			}
 		}
-		
+
 		if (options.contains(PayloadOptions.SCOPE)) {
 			if (options.contains(PayloadOptions.SCOPE_NOT_EXIST)) {
 				builder.add("scopes", Json.createArrayBuilder().add("scopeOther1").add("scopeOther2"));
@@ -77,7 +67,7 @@ public class MockService {
 				builder.add("scopes", Json.createArrayBuilder().add("scope1").add("scope2"));
 			}
 		}
-		
+
 		if (options.contains(PayloadOptions.GROUPROLE)) {
 			JsonArrayBuilder groupsBuilder = Json.createArrayBuilder();
 			JsonObjectBuilder groupBuilder = Json.createObjectBuilder();
@@ -92,50 +82,39 @@ public class MockService {
 			groupsBuilder.add(groupBuilder);
 			builder.add("groups", groupsBuilder);
 		}
-		
+
 		else if (options.contains(PayloadOptions.GROUP)) {
 			if (options.contains(PayloadOptions.GROUP_NOT_EXIST)) {
-				builder.add("groups", Json.createArrayBuilder()
-							.add(Json.createObjectBuilder()
-								.add("groupId", "groupOther1")
-								.add("roles", Json.createArrayBuilder().add("grouprole1").add("grouprole2"))
-							)
-							.add(Json.createObjectBuilder()
-								.add("groupId", "groupOther2")
-								.add("roles", Json.createArrayBuilder().add("grouprole3").add("grouprole4"))
-							)
-						);
+				builder.add("groups",
+						Json.createArrayBuilder()
+								.add(Json.createObjectBuilder().add("groupId", "groupOther1").add("roles",
+										Json.createArrayBuilder().add("grouprole1").add("grouprole2")))
+								.add(Json.createObjectBuilder().add("groupId", "groupOther2").add("roles",
+										Json.createArrayBuilder().add("grouprole3").add("grouprole4"))));
 			} else if (options.contains(PayloadOptions.GROUP_NOT_COMPLETE)) {
-				builder.add("groups", Json.createArrayBuilder()
-						.add(Json.createObjectBuilder()
-							.add("groupId", "group1")
-							.add("roles", Json.createArrayBuilder().add("grouprole1").add("grouprole2"))
-						)
-						.add(Json.createObjectBuilder()
-							.add("groupId", "groupOther2")
-							.add("roles", Json.createArrayBuilder().add("grouprole3").add("grouprole4"))
-						)
-					);
+				builder.add("groups",
+						Json.createArrayBuilder()
+								.add(Json.createObjectBuilder().add("groupId", "group1").add("roles",
+										Json.createArrayBuilder().add("grouprole1").add("grouprole2")))
+								.add(Json.createObjectBuilder().add("groupId", "groupOther2").add("roles",
+										Json.createArrayBuilder().add("grouprole3").add("grouprole4"))));
 			} else {
-				builder.add("groups", Json.createArrayBuilder()
-						.add(Json.createObjectBuilder()
-							.add("groupId", "group1")
-							.add("roles", Json.createArrayBuilder().add("grouprole1").add("grouprole2"))
-						)
-						.add(Json.createObjectBuilder()
-							.add("groupId", "group2")
-							.add("roles", Json.createArrayBuilder().add("grouprole3").add("grouprole4"))
-						)
-					);
+				builder.add("groups",
+						Json.createArrayBuilder()
+								.add(Json.createObjectBuilder().add("groupId", "group1").add("roles",
+										Json.createArrayBuilder().add("grouprole1").add("grouprole2")))
+								.add(Json.createObjectBuilder().add("groupId", "group2").add("roles",
+										Json.createArrayBuilder().add("grouprole3").add("grouprole4"))));
 			}
 		}
 		return builder.build();
 	}
-	
+
 	TokenIntrospectionRequest createIntrospectionRequest() {
-		return createIntrospectionRequest(Arrays.asList(IntrospectionOptions.ROLE, IntrospectionOptions.SCOPE, IntrospectionOptions.GROUP));
+		return createIntrospectionRequest(
+				Arrays.asList(IntrospectionOptions.ROLE, IntrospectionOptions.SCOPE, IntrospectionOptions.GROUP));
 	}
-	
+
 	TokenIntrospectionRequest createIntrospectionRequest(List<IntrospectionOptions> options) {
 		TokenIntrospectionRequest result = new TokenIntrospectionRequest();
 		if (options.contains(IntrospectionOptions.ROLE)) {
@@ -157,32 +136,13 @@ public class MockService {
 		result.setStrictValidation(options.contains(IntrospectionOptions.VALIDATION_STRICT));
 		return result;
 	}
-	
+
 	enum PayloadOptions {
-		ROLE,
-		GROUP,
-		GROUPROLE,
-		SCOPE,
-		ROLE_NOT_EXIST,
-		GROUP_NOT_EXIST,
-		GROUPROLE_NOT_EXIST,
-		SCOPE_NOT_EXIST,
-		ROLE_NOT_COMPLETE,
-		GROUP_NOT_COMPLETE,
-		GROUPROLE_NOT_COMPLETE,
-		SCOPE_NOT_COMPLETE,
-		ISS_INVALID,
-		EXP_INVALID,
+		ROLE, GROUP, GROUPROLE, SCOPE, ROLE_NOT_EXIST, GROUP_NOT_EXIST, GROUPROLE_NOT_EXIST, SCOPE_NOT_EXIST,
+		ROLE_NOT_COMPLETE, GROUP_NOT_COMPLETE, GROUPROLE_NOT_COMPLETE, SCOPE_NOT_COMPLETE, ISS_INVALID, EXP_INVALID,
 	}
-	
-	enum IntrospectionOptions{
-		ROLE,
-		GROUP,
-		SCOPE,
-		ROLE_STRICT,
-		GROUP_STRICT,
-		GROUPROLE_STRICT,
-		SCOPE_STRICT,
-		VALIDATION_STRICT
+
+	enum IntrospectionOptions {
+		ROLE, GROUP, SCOPE, ROLE_STRICT, GROUP_STRICT, GROUPROLE_STRICT, SCOPE_STRICT, VALIDATION_STRICT
 	}
 }

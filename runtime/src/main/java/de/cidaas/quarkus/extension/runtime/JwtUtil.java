@@ -9,29 +9,29 @@ import jakarta.json.JsonReader;
 
 public class JwtUtil {
 	/**
-     * decode header part of accessToken
-     *
-     * @param accessToken to be decoded.
-     * 
-     * @return decoded JsonObject
-     */
+	 * decode header part of accessToken
+	 *
+	 * @param accessToken to be decoded.
+	 * 
+	 * @return decoded JsonObject
+	 */
 	static JsonObject decodeHeader(String accessToken) {
 		String[] arr = accessToken.split("\\.", 0);
 		return decode(arr[0]);
 	}
-	
+
 	/**
-     * decode payload part of accessToken
-     *
-     * @param accessToken to be decoded.
-     * 
-     * @return decoded JsonObject
-     */
+	 * decode payload part of accessToken
+	 *
+	 * @param accessToken to be decoded.
+	 * 
+	 * @return decoded JsonObject
+	 */
 	static JsonObject decodePayload(String accessToken) {
 		String[] arr = accessToken.split("\\.", 0);
 		return decode(arr[1]);
 	}
-	
+
 	private static JsonObject decode(String encoded) {
 		Base64.Decoder decoder = Base64.getDecoder();
 		byte[] decodedBytes = decoder.decode(encoded);

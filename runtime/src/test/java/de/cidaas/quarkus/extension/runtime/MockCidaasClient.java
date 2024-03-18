@@ -19,7 +19,7 @@ public class MockCidaasClient implements CidaasClient {
 
 	@Inject
 	MockService mockService;
-	
+
 	@Override
 	public Response getJwks() {
 		JsonObject jwks = mockService.createJwks();

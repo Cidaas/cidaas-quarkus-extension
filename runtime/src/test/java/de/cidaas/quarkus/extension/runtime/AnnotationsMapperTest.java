@@ -19,42 +19,50 @@ public class AnnotationsMapperTest {
 		String accessToken = "";
 		TokenValidation tokenValidation = new TokenValidation() {
 			@Override
-            public Class<? extends Annotation> annotationType()
-            {
-                return TokenValidation.class;
-            }
+			public Class<? extends Annotation> annotationType() {
+				return TokenValidation.class;
+			}
+
 			@Override
 			public String tokenTypeHint() {
 				return null;
 			}
+
 			@Override
 			public String[] roles() {
 				return null;
 			}
+
 			@Override
 			public GroupAllowed[] groups() {
 				return null;
 			}
+
 			@Override
 			public String[] scopes() {
 				return null;
 			}
+
 			@Override
 			public boolean strictRoleValidation() {
 				return false;
 			}
+
 			@Override
 			public boolean strictGroupValidation() {
 				return false;
 			}
+
 			@Override
 			public boolean strictScopeValidation() {
 				return false;
 			}
+
 			@Override
 			public boolean strictValidation() {
 				return false;
 			}
+
 			@Override
 			public boolean offlineValidation() {
 				return false;
@@ -71,16 +79,15 @@ public class AnnotationsMapperTest {
 		assertFalse(result.isStrictRoleValidation());
 		assertFalse(result.isStrictValidation());
 	}
-	
+
 	@Test
 	public void testMapAnnotationWithValue() {
 		String accessToken = "accessToken";
 		TokenValidation tokenValidation = new TokenValidation() {
 			@Override
-            public Class<? extends Annotation> annotationType()
-            {
-                return TokenValidation.class;
-            }
+			public Class<? extends Annotation> annotationType() {
+				return TokenValidation.class;
+			}
 
 			@Override
 			public String tokenTypeHint() {
@@ -89,7 +96,7 @@ public class AnnotationsMapperTest {
 
 			@Override
 			public String[] roles() {
-				String[] roles = {"role1", "role2"};
+				String[] roles = { "role1", "role2" };
 				return roles;
 			}
 
@@ -100,15 +107,18 @@ public class AnnotationsMapperTest {
 					public Class<? extends Annotation> annotationType() {
 						return GroupAllowed.class;
 					}
+
 					@Override
 					public String id() {
 						return "group1";
 					}
+
 					@Override
 					public String[] roles() {
-						String[] roles = {"grouprole1"};
+						String[] roles = { "grouprole1" };
 						return roles;
 					}
+
 					@Override
 					public boolean strictRoleValidation() {
 						return false;
@@ -119,27 +129,30 @@ public class AnnotationsMapperTest {
 					public Class<? extends Annotation> annotationType() {
 						return GroupAllowed.class;
 					}
+
 					@Override
 					public String id() {
 						return "group2";
 					}
+
 					@Override
 					public String[] roles() {
-						String[] roles = {"grouprole2"};
+						String[] roles = { "grouprole2" };
 						return roles;
 					}
+
 					@Override
 					public boolean strictRoleValidation() {
 						return true;
 					}
 				};
-				GroupAllowed[] groups = {group1, group2};
+				GroupAllowed[] groups = { group1, group2 };
 				return groups;
 			}
 
 			@Override
 			public String[] scopes() {
-				String[] scopes = {"scope1", "scope2"};
+				String[] scopes = { "scope1", "scope2" };
 				return scopes;
 			}
 
@@ -174,10 +187,12 @@ public class AnnotationsMapperTest {
 		assertEquals(result.getRoles(), Arrays.asList(tokenValidation.roles()));
 		assertEquals(result.getGroups().get(0).getGroupId(), tokenValidation.groups()[0].id());
 		assertEquals(result.getGroups().get(0).getRoles(), Arrays.asList(tokenValidation.groups()[0].roles()));
-		assertEquals(result.getGroups().get(0).isStrictRoleValidation(), tokenValidation.groups()[0].strictRoleValidation());
+		assertEquals(result.getGroups().get(0).isStrictRoleValidation(),
+				tokenValidation.groups()[0].strictRoleValidation());
 		assertEquals(result.getGroups().get(1).getGroupId(), tokenValidation.groups()[1].id());
 		assertEquals(result.getGroups().get(1).getRoles(), Arrays.asList(tokenValidation.groups()[1].roles()));
-		assertEquals(result.getGroups().get(1).isStrictRoleValidation(), tokenValidation.groups()[1].strictRoleValidation());
+		assertEquals(result.getGroups().get(1).isStrictRoleValidation(),
+				tokenValidation.groups()[1].strictRoleValidation());
 		assertEquals(result.getScopes(), Arrays.asList(tokenValidation.scopes()));
 		assertEquals(result.isStrictGroupValidation(), tokenValidation.strictGroupValidation());
 		assertEquals(result.isStrictScopeValidation(), tokenValidation.strictScopeValidation());

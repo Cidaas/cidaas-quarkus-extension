@@ -22,14 +22,14 @@ public class CacheService {
 	@Inject
 	@RestClient
 	CidaasClient cidaasClient;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(CacheService.class);
-	
-	void onStart(@Observes StartupEvent ev) {  
+
+	void onStart(@Observes StartupEvent ev) {
 		getJwks();
 		LOG.info("get JWK cache.");
-    }
-	
+	}
+
 	@CacheResult(cacheName = "jwk-cache")
 	JsonObject getJwks() {
 		Response response = cidaasClient.getJwks();
@@ -38,19 +38,20 @@ public class CacheService {
 		}
 		return response.readEntity(JsonObject.class);
 	}
-	
+
 	@CacheInvalidate(cacheName = "jwk-cache")
-	void clearJwkCache() {}
-	
+	void clearJwkCache() {
+	}
+
 	@Scheduled(every = "${de.cidaas.quarkus.extension.cache-refresh-rate:86400s}") // 1 day by default
 	void refreshJwks() {
 		clearJwkCache();
 		getJwks();
 		LOG.info("refresh JWK cache!");
 	}
-	
+
 	void onStop(@Observes ShutdownEvent ev) {
 		clearJwkCache();
 		LOG.info("clear JWK cache.");
-    }
+	}
 }

@@ -21,13 +21,13 @@ public class CidaasServiceTest {
 	@InjectMock
 	@RestClient
 	MockCidaasClient cidaasClient;
-	
+
 	@Inject
 	CidaasService cidaasService;
-	
+
 	@Inject
 	MockService mockService;
-	
+
 	@Test
 	public void testCallIntrospectTokenWithRequest() {
 		JsonObject body = Json.createObjectBuilder().add("active", true).build();

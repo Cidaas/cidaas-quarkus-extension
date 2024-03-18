@@ -12,7 +12,7 @@ public interface CidaasClient {
 	@GET
 	@Path("/.well-known/jwks.json")
 	Response getJwks();
-	
+
 	@POST
 	@Path("/token-srv/introspect")
 	Response callIntrospection(TokenIntrospectionRequest payload);

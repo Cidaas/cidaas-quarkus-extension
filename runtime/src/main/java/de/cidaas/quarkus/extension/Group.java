@@ -6,14 +6,14 @@ public class Group {
 	private String groupId;
 	private List<String> roles;
 	private boolean strictRoleValidation;
-	
+
 	public Group(String groupId, List<String> roles) {
 		super();
 		this.groupId = groupId;
 		this.roles = roles;
 		this.strictRoleValidation = false;
 	}
-	
+
 	public Group(String groupId, List<String> roles, boolean strictRoleValidation) {
 		super();
 		this.groupId = groupId;
@@ -44,5 +44,5 @@ public class Group {
 	public void setStrictRoleValidation(boolean strictRoleValidation) {
 		this.strictRoleValidation = strictRoleValidation;
 	}
-	
+
 }

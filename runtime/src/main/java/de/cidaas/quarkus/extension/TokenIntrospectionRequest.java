@@ -12,7 +12,7 @@ public class TokenIntrospectionRequest {
 	private boolean strictScopeValidation;
 	private boolean strictRoleValidation;
 	private boolean strictValidation;
-	
+
 	public TokenIntrospectionRequest() {
 		super();
 	}
@@ -88,5 +88,5 @@ public class TokenIntrospectionRequest {
 	public void setStrictValidation(boolean strictValidation) {
 		this.strictValidation = strictValidation;
 	}
-	
+
 }
