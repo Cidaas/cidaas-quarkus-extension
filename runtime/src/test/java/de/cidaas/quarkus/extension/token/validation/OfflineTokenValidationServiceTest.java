@@ -92,8 +92,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE, PayloadOptions.SCOPE_NOT_COMPLETE)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
 			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
@@ -104,8 +104,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.SCOPE)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.SCOPE, ValidationOptions.SCOPE_STRICT));
 			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
@@ -136,8 +136,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.ROLE, PayloadOptions.ROLE_NOT_COMPLETE)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
 			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
@@ -148,8 +148,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.ROLE)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.ROLE, ValidationOptions.ROLE_STRICT));
 			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
@@ -180,8 +180,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null)).thenReturn(
 					mockService.createPayload(Arrays.asList(PayloadOptions.GROUP, PayloadOptions.GROUP_NOT_COMPLETE)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
 			assertFalse(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}
@@ -192,8 +192,8 @@ public class OfflineTokenValidationServiceTest {
 			mockStatic.when(() -> JwtUtil.decodeHeader(null)).thenReturn(header);
 			mockStatic.when(() -> JwtUtil.decodePayload(null))
 					.thenReturn(mockService.createPayload(Arrays.asList(PayloadOptions.GROUP)));
-			tokenValidationRequest = mockService.createValidationRequest(
-					Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
+			tokenValidationRequest = mockService
+					.createValidationRequest(Arrays.asList(ValidationOptions.GROUP, ValidationOptions.GROUP_STRICT));
 			assertTrue(offlineTokenValidationService.validateToken(tokenValidationRequest));
 		}
 	}

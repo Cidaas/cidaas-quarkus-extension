@@ -19,8 +19,11 @@ public class MockAddressValidationClient implements AddressValidationClient {
 	public Response callValidateAddress(String street, String hno, String zip, String city, String country,
 			String apicid, String apikey, String product) {
 		JsonObject body = Json.createObjectBuilder()
-				.add("sc", Json.createArrayBuilder().add(Json.createObjectBuilder().add("street", "").add("hno", "").add("zip", "")
-						.add("city", "").add("district", "").add("points", 0).add("resultcode", "").add("resulttext", "OK").add("trafficlight", "")))
+				.add("sc",
+						Json.createArrayBuilder()
+								.add(Json.createObjectBuilder().add("street", "").add("hno", "").add("zip", "")
+										.add("city", "").add("district", "").add("points", 0).add("resultcode", "")
+										.add("resulttext", "OK").add("trafficlight", "")))
 				.build();
 		return Response.ok(body).build();
 	}

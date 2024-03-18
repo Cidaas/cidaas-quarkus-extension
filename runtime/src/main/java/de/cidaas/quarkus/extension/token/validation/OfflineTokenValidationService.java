@@ -25,8 +25,8 @@ public class OfflineTokenValidationService implements ValidationService {
 	/**
 	 * validate token without calling introspection endpoint.
 	 *
-	 * @param TokenValidationRequest contain access token & definition which
-	 *                                  claims to be validated and how.
+	 * @param TokenValidationRequest contain access token & definition which claims
+	 *                               to be validated and how.
 	 * 
 	 * @return true if tokenValidationRequest is valid, false if invalid
 	 */
@@ -94,7 +94,7 @@ public class OfflineTokenValidationService implements ValidationService {
 
 		String kid = header.getString("kid", null);
 		String alg = header.getString("alg", null);
-		
+
 		if (kid == null || alg == null) {
 			LOG.error("header is invalid!");
 			throw new TokenValidationException("Header invalid!");
@@ -119,8 +119,8 @@ public class OfflineTokenValidationService implements ValidationService {
 	 * @return true if payload is valid, false if invalid
 	 */
 	boolean validateGeneralInfo(JsonObject payload) {
-		String baseUrl = ConfigProvider.getConfig().getValue("de.cidaas.quarkus.extension.runtime.CidaasClient/mp-rest/url",
-				String.class);
+		String baseUrl = ConfigProvider.getConfig()
+				.getValue("de.cidaas.quarkus.extension.runtime.CidaasClient/mp-rest/url", String.class);
 
 		if (payload.getString("iss", null) == null) {
 			LOG.warn("token doesn't have iss!");
@@ -173,8 +173,8 @@ public class OfflineTokenValidationService implements ValidationService {
 			LOG.warn("token doesn't have enough roles!");
 			return false;
 		}
-		if (tokenValidationRequest.isStrictRoleValidation() == false && !rolesFromToken.stream()
-				.anyMatch(element -> tokenValidationRequest.getRoles().contains(element))) {
+		if (tokenValidationRequest.isStrictRoleValidation() == false
+				&& !rolesFromToken.stream().anyMatch(element -> tokenValidationRequest.getRoles().contains(element))) {
 			LOG.warn("token doesn't have enough roles!");
 			return false;
 		}

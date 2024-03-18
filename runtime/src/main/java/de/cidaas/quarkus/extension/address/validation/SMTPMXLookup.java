@@ -83,8 +83,8 @@ public class SMTPMXLookup {
 			}
 		} catch (NamingException ne) {
 			LOG.info("Error during DNS lookup.", ne);
-			throw new AddressValidationException(
-					"Exception while validating the Address " + address + " domain " + domain + " Exception is " + ne.getMessage());
+			throw new AddressValidationException("Exception while validating the Address " + address + " domain "
+					+ domain + " Exception is " + ne.getMessage());
 		}
 
 		LOG.info("Email Validation Request timing: {}ms", System.currentTimeMillis() - validationStart);
