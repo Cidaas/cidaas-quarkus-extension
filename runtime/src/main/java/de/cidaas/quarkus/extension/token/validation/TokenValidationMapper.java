@@ -10,7 +10,7 @@ import de.cidaas.quarkus.extension.annotation.TokenValidation;
 public class TokenValidationMapper {
 
 	/**
-	 * map TokenValidation to TokenValidationRequest
+	 * map TokenValidation annotation to TokenValidationRequest
 	 *
 	 * @param accessToken     token to be put on TokenValidationRequest.
 	 * @param tokenValidation input from method annotation.
