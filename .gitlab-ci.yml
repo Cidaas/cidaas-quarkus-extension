@@ -1,0 +1,26 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  image: maven:3.9.6-eclipse-temurin-21
+  script:
+      - "mvn clean install -Dmaven.test.skip=true"
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - target/*
+      - deployment/target/*
+      - runtime/target/*
+      
+test:
+  stage: test
+  image: maven:3.9.6-eclipse-temurin-21
+  script:
+      - "mvn test"
+  coverage: '/Total.*?([0-9]{1,3})%/'
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - runtime/target/site/jacoco/*
