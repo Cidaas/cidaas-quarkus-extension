@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cidaas</groupId>
   <artifactId>cidaas-quarkus-extension-parent</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
 
   <description>Quarkus Extension to integrate cidaas seamlessly to Java Project, which used Quarkus Framework.</description>
@@ -26,23 +26,14 @@
     </developer>
   </developers>
 
-  <repositories>
-    <repository>
-      <id>gitlab-maven</id>
-      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <repository>
-      <id>wcorporate.gitlab</id>
-      <name>Widas Internal Corporate Repository</name>
-      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
     <snapshotRepository>
-      <id>wcorporate.gitlab</id>
-      <name>Widas Snapshots Corporate Repository</name>
-      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
