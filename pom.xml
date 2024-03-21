@@ -6,7 +6,53 @@
   <artifactId>cidaas-quarkus-extension-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <description>Quarkus Extension to integrate cidaas seamlessly to Java Project, which used Quarkus Framework.</description>
+  <url>https://github.com/Cidaas/cidaas-quarkus-extension</url>
   <name>Cidaas Quarkus Extension - Parent</name>
+
+  <licenses>
+    <license>
+      <name>MIT Licence</name>
+      <url>https://opensource.org/licenses/mit-license</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Cidaas</name>
+      <email>developer@cidaas.de</email>
+      <organization>Widas ID</organization>
+      <organizationUrl>https://www.widas.de</organizationUrl>
+    </developer>
+  </developers>
+
+  <repositories>
+    <repository>
+      <id>gitlab-maven</id>
+      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>wcorporate.gitlab</id>
+      <name>Widas Internal Corporate Repository</name>
+      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
+    </repository>
+    <snapshotRepository>
+      <id>wcorporate.gitlab</id>
+      <name>Widas Snapshots Corporate Repository</name>
+      <url>https://gitlab.widas.de/api/v4/projects/${CI_PROJECT_ID}/packages/maven</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:git@gitlab.widas.de:cidaas-public-devkits/extensions/cidaas-quarkus-extension.git</connection>
+    <url>scm:git:git@gitlab.widas.de:cidaas-public-devkits/extensions/cidaas-quarkus-extension.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <modules>
     <module>deployment</module>
     <module>runtime</module>
