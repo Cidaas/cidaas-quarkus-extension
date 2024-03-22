@@ -25,7 +25,7 @@ public class OfflineTokenValidationService implements ValidationService {
 	/**
 	 * validate token without calling introspection endpoint.
 	 *
-	 * @param TokenValidationRequest contain access token & definition which claims
+	 * @param tokenValidationRequest contain access token and definition which claims
 	 *                               to be validated and how.
 	 * 
 	 * @return true if tokenValidationRequest is valid, false if invalid

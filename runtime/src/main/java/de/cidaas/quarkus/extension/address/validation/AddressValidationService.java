@@ -25,7 +25,7 @@ public class AddressValidationService {
 	 * Checks whether address is valid.
 	 *
 	 * @param request contains address information to be validated such as street,
-	 *                house number, zip code, city & country.
+	 *                house number, zip code, city and country.
 	 * @return AddressValidationResult contains details about Address Validation
 	 *         Result
 	 */
