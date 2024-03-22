@@ -109,8 +109,8 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:git:git@github.com:Cidaas/cidaas-quarkus-extension.git</connection>
-    <url>scm:git:git@github.com:Cidaas/cidaas-quarkus-extension.git</url>
+    <connection>scm:git:git@gitlab.widas.de:cidaas-public-devkits/extensions/cidaas-quarkus-extension.git</connection>
+    <url>scm:git:git@gitlab.widas.de:cidaas-public-devkits/extensions/cidaas-quarkus-extension.git</url>
     <tag>HEAD</tag>
   </scm>
 
