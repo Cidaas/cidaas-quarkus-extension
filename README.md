@@ -2,6 +2,10 @@
 
 Quarkus Extension to integrate cidaas seamlessly to Java Project, which used Quarkus Framework.
 
+## Requirement
+
+Ensure your project is using Quarkus Framework v3.12.0 or later and using Quarkus REST extension instead of RESTEasy Classic or RESTEasy Reactive, to use cidaas-quarkus-extension v2.0 and later.
+
 ## Installation
 
 From Maven pom.xml, add the following dependency:
